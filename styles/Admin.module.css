@@ -1,0 +1,110 @@
+/* styles/Admin.module.css */
+
+.adminContainer {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.adminContainer h1 {
+  color: #1a202c;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+.tableContainer {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: #2d3748;
+}
+
+.table th,
+.table td {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table th {
+  background-color: #f7fafc;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #718096;
+}
+
+.table tr:first-child th:first-child { border-top-left-radius: 8px; }
+.table tr:first-child th:last-child { border-top-right-radius: 8px; }
+
+.table tr:hover td {
+    background-color: #f8f9fa;
+}
+
+.select, .button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e0;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+}
+
+.select:focus, .button:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+}
+
+.button {
+  color: white;
+  border: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Verify Button */
+.verifyButton {
+    background: linear-gradient(to right, #34d399, #10b981);
+}
+
+.verifyButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Un-verify Button */
+.unverifyButton {
+    background: linear-gradient(to right, #fbbf24, #f59e0b);
+}
+
+.unverifyButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.error {
+  color: #e53e3e;
+  background-color: #fff5f5;
+  border-left: 4px solid #e53e3e;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+}

@@ -1,0 +1,182 @@
+/* styles/Login.module.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.pageContainer {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    background-color: #fff;
+}
+
+.visualSide {
+    flex: 1;
+    background: linear-gradient(45deg, #4A90E2 0%, #0070F3 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    text-align: center;
+}
+
+.visualSide h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    letter-spacing: -1px;
+}
+
+.visualSide p {
+    font-size: 1.1rem;
+    max-width: 450px;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.formSide {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f7f8fc;
+}
+
+.formWrapper {
+    width: 100%;
+    max-width: 400px;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.header h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+}
+
+.header p {
+    margin-top: 0.5rem;
+    color: #718096;
+    font-size: 1rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.inputGroup {
+    position: relative;
+}
+
+.inputIcon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+}
+
+.input {
+    width: 100%;
+    padding: 0.9rem 1rem 0.9rem 2.75rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background-color: #fff;
+    font-size: 1rem;
+    color: #2d3748;
+    transition: all 0.2s ease-in-out;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.button {
+    background: linear-gradient(to right, #4A90E2, #0070F3);
+    color: white;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 112, 243, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-top: 0.5rem;
+}
+
+.button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 10px -1px rgba(0, 112, 243, 0.35), 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+}
+
+.button:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.footer a {
+    color: #0070F3;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.error {
+    color: #c53030;
+    background-color: #fed7d7;
+    border: 1px solid #fbb6b6;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.9rem;
+    text-transform: capitalize;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pageContainer {
+        flex-direction: column;
+    }
+
+    .visualSide {
+        flex: 0;
+        padding: 4rem 1.5rem;
+    }
+    
+    .visualSide h1 {
+        font-size: 2.25rem;
+    }
+
+    .visualSide p {
+        font-size: 1rem;
+    }
+
+    .formSide {
+        flex: 1;
+        padding: 2rem 1.5rem;
+    }
+}

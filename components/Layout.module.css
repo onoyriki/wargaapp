@@ -1,0 +1,183 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+.layoutContainer {
+    display: flex;
+    min-height: 100vh;
+    background-color: #1a202c; 
+    color: #e2e8f0; 
+    font-family: 'Poppins', sans-serif;
+    position: relative; /* Needed for backdrop positioning */
+}
+
+.sidebar {
+    width: 250px; /* Slightly narrower sidebar */
+    background: #111827; 
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    border-right: 1px solid #374151; 
+    transition: transform 0.3s ease-in-out;
+    z-index: 100;
+}
+
+.sidebarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.sidebarHeader h2 {
+    margin: 0;
+    font-size: 1.6rem; /* Reduced font size */
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.closeButton {
+    display: none; 
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 1.4rem; /* Reduced font size */
+    cursor: pointer;
+}
+
+.sidebarNav {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Tighter spacing */
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.8rem 1.1rem;
+    border-radius: 8px;
+    color: #9ca3af; 
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem; /* Explicitly set font size */
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.navLink:hover {
+    background-color: #374151; 
+    color: #fff;
+}
+
+.navLink.active {
+    background-color: #3b82f6; 
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+}
+
+.navLink svg {
+    font-size: 1.1rem; /* Reduced icon size */
+}
+
+.sidebarFooter {
+    margin-top: auto; 
+}
+
+.logoutButton {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.8rem 1.1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: transparent;
+    color: #9ca3af;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.95rem; /* Match nav links */
+    font-weight: 500;
+    font-family: inherit;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.logoutButton:hover {
+    background-color: #ef4444; 
+    color: #fff;
+}
+
+.logoutButton svg {
+    font-size: 1.1rem; /* Match nav icons */
+}
+
+.mainContent {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: auto; 
+}
+
+.menuButton {
+    background-color: #334155;
+    color: #e2e8f0;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1.4rem; /* Reduced icon size */
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    display: none; /* Initially hidden, shown in media query */
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.menuButton span {
+    font-size: 0.9rem;
+}
+
+.backdrop {
+    display: none; 
+}
+
+/* --- Mobile Responsive Styles --- */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        transform: translateX(-100%);
+    }
+
+    .sidebarOpen {
+        transform: translateX(0);
+    }
+
+    .sidebarHeader h2 {
+        font-size: 1.5rem;
+    }
+
+    .closeButton {
+        display: block;
+    }
+
+    .mainContent {
+        padding: 1rem;
+    }
+
+    .menuButton {
+        display: inline-flex;
+    }
+
+    .backdrop {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 50; 
+    }
+}
