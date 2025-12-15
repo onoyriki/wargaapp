@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { collection, addDoc, onSnapshot, serverTimestamp, deleteDoc, doc, updateDoc, query, orderBy } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../../lib/firebase';
 import { useAuth } from '../../lib/hooks';
 import Layout from '../../components/Layout';
 import { withAuth } from '../../components/withAuth';
@@ -15,6 +16,7 @@ interface Pengumuman {
     isi: string;
     penulis: string;
     createdAt: any;
+    images?: string[];
 }
 
 function KelolaPengumuman() {
@@ -25,6 +27,7 @@ function KelolaPengumuman() {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const [files, setFiles] = useState<FileList | null>(null);
 
     useEffect(() => {
         const q = query(collection(db, 'pengumuman'), orderBy('createdAt', 'desc'));
@@ -53,15 +56,34 @@ function KelolaPengumuman() {
                 });
                 setEditingId(null);
             } else {
+                // Upload images
+                let imageUrls: string[] = [];
+                if (files && files.length > 0) {
+                    if (files.length > 3) {
+                        setError('Maksimal 3 foto.');
+                        setIsSubmitting(false);
+                        return;
+                    }
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const storageRef = ref(storage, `pengumuman/${Date.now()}_${file.name}`);
+                        await uploadBytes(storageRef, file);
+                        const url = await getDownloadURL(storageRef);
+                        imageUrls.push(url);
+                    }
+                }
+
                 await addDoc(collection(db, 'pengumuman'), {
                     judul,
                     isi,
                     penulis: userData?.nama || 'Admin',
                     createdAt: serverTimestamp(),
+                    images: imageUrls,
                 });
             }
             setJudul('');
             setIsi('');
+            setFiles(null);
         } catch (err) {
             console.error(err);
             setError('Gagal menyimpan pengumuman.');
@@ -100,6 +122,7 @@ function KelolaPengumuman() {
                         {error && <p className={styles.errorBanner}>{error}</p>}
                         <div className={styles.inputGroup}><label htmlFor="judul">Judul</label><input id="judul" type="text" value={judul} onChange={(e) => setJudul(e.target.value)} /></div>
                         <div className={styles.inputGroup}><label htmlFor="isi">Isi Pengumuman</label><textarea id="isi" value={isi} onChange={(e) => setIsi(e.target.value)} rows={5}></textarea></div>
+                        <div className={styles.inputGroup}><label htmlFor="files">Lampirkan Foto (maks 3)</label><input id="files" type="file" multiple accept="image/*" onChange={(e) => setFiles(e.target.files)} /></div>
                         <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
                             {editingId ? <><FaSave /> Simpan Perubahan</> : <><FaPlus /> Publikasikan</>}
                         </button>

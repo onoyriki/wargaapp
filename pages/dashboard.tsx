@@ -5,8 +5,9 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../lib/hooks';
 import { withAuth } from '../components/withAuth';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, addDoc, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { collection, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDocs, where } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../lib/firebase';
 import Layout from '../components/Layout';
 import AdminDashboard from '../components/AdminDashboard';
 import styles from '../styles/Dashboard.module.css';
@@ -21,6 +22,7 @@ interface Iklan {
     deskripsi: string;
     creatorEmail: string;
     creatorName: string;
+    images?: string[];
 }
 
 interface IklanCardProps {
@@ -44,6 +46,9 @@ const IklanCard: FC<IklanCardProps> = ({ iklan, onEdit, onDelete }) => {
         <div className={wargaStyles.iklanCard}>
             <h4>{iklan.judul}</h4>
             <p>{iklan.deskripsi}</p>
+            {iklan.images && iklan.images.map((url, idx) => (
+                <img key={idx} src={url} alt={`Iklan ${idx+1}`} className={wargaStyles.iklanImage} />
+            ))}
             <small>Diposting oleh: {iklan.creatorName}</small>
             {canEdit && (
                 <div className={wargaStyles.iklanActions}>
@@ -60,11 +65,30 @@ function WargaDashboard() {
     const [iklanCollection, loadingIklan] = useCollection(query(collection(db, 'iklan'), orderBy('createdAt', 'desc')));
     const [showForm, setShowForm] = useState(false);
     const [formState, setFormState] = useState<IklanFormState>({ id: null, judul: '', deskripsi: '' });
+    const [files, setFiles] = useState<FileList | null>(null);
 
     // 3. Apply types to handlers
     const handleFormSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!user || !userData) return;
+
+        // Cek jika user sudah punya iklan aktif (belum expired)
+        if (!formState.id) {
+            const now = new Date();
+            const activeIklanQuery = query(
+                collection(db, 'iklan'),
+                where('creatorEmail', '==', user.email)
+            );
+            const activeIklanSnapshot = await getDocs(activeIklanQuery);
+            const hasActiveIklan = activeIklanSnapshot.docs.some(doc => {
+                const data = doc.data();
+                return data.expiredAt && data.expiredAt.toDate() > now;
+            });
+            if (hasActiveIklan) {
+                alert('Anda sudah memiliki iklan aktif. Tunggu hingga iklan sebelumnya expired (7 hari) untuk posting iklan baru.');
+                return;
+            }
+        }
 
         if (formState.id) {
             await updateDoc(doc(db, 'iklan', formState.id), {
@@ -78,9 +102,12 @@ function WargaDashboard() {
                 creatorEmail: user.email,
                 creatorName: userData.nama || 'Warga',
                 createdAt: new Date(),
+                expiredAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 hari
+                images: imageUrls,
             });
         }
         setFormState({ id: null, judul: '', deskripsi: '' });
+        setFiles(null);
         setShowForm(false);
     };
 
@@ -109,6 +136,8 @@ function WargaDashboard() {
                     <form onSubmit={handleFormSubmit} className={wargaStyles.form}>
                         <input type="text" placeholder="Judul Iklan" value={formState.judul} onChange={(e) => setFormState({ ...formState, judul: e.target.value })} required />
                         <textarea placeholder="Deskripsi Iklan" value={formState.deskripsi} onChange={(e) => setFormState({ ...formState, deskripsi: e.target.value })} required></textarea>
+                        <input type="file" multiple accept="image/*" onChange={(e) => setFiles(e.target.files)} />
+                        <small>Maksimal 3 foto (opsional)</small>
                         <button type="submit" className={wargaStyles.primaryButton}>{formState.id ? 'Update Iklan' : 'Posting Iklan'}</button>
                     </form>
                 )}

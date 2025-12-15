@@ -9,13 +9,14 @@ import styles from './Layout.module.css';
 import { 
     FaTachometerAlt, FaUsers, FaSignOutAlt, FaBars, FaTimes, 
     FaUsersCog, FaShieldAlt, FaUserCircle, FaFileInvoiceDollar, 
-    FaChartLine, FaMoneyBillWave 
+    FaChartLine, FaMoneyBillWave, FaBullhorn
 } from 'react-icons/fa';
 
 const navConfig = {
     admin: [
         { href: '/dashboard', label: 'Dashboard', icon: <FaTachometerAlt /> },
         { href: '/admin/verifikasi', label: 'Verifikasi Pengguna', icon: <FaUsersCog /> },
+        { href: '/admin/kelola-pengumuman', label: 'Kelola Pengumuman', icon: <FaBullhorn /> },
         { href: '/data-warga', label: 'Data Warga', icon: <FaUsers /> },
         { href: '/admin/kelola-iuran', label: 'Kelola Iuran', icon: <FaFileInvoiceDollar /> },
         { href: '/admin/laporan-keuangan', label: 'Laporan Keuangan', icon: <FaChartLine /> },

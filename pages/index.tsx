@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth, db } from '../lib/firebase';
+import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import styles from '../styles/Login.module.css';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 
@@ -13,6 +15,9 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
   const router = useRouter();
+
+  const [iklanCollection] = useCollection(query(collection(db, 'iklan'), orderBy('createdAt', 'desc'), limit(3)));
+  const [pengumumanCollection] = useCollection(query(collection(db, 'pengumuman'), orderBy('createdAt', 'desc'), limit(3)));
 
   useEffect(() => {
     if (user) {
@@ -80,6 +85,40 @@ export default function Home() {
 
           <div className={styles.footer}>
             <p>Belum punya akun? <Link href="/register">Daftar di sini</Link></p>
+          </div>
+        </div>
+      </div>
+
+      {/* Pengumuman dan Iklan Terbaru */}
+      <div className={styles.announcementsSection}>
+        <div className={styles.announcementsGrid}>
+          <div className={styles.announcementSection}>
+            <h2>Pengumuman</h2>
+            {pengumumanCollection?.docs.map(doc => {
+              const data = doc.data();
+              return (
+                <div key={doc.id} className={styles.announcementItem}>
+                  <h3>{data.judul}</h3>
+                  <p>{data.isi}</p>
+                  <small>Dari: {data.penulis}</small>
+                </div>
+              );
+            })}
+            {!pengumumanCollection && <p>Memuat pengumuman...</p>}
+          </div>
+          <div className={styles.announcementSection}>
+            <h2>Iklan</h2>
+            {iklanCollection?.docs.map(doc => {
+              const data = doc.data();
+              return (
+                <div key={doc.id} className={styles.announcementItem}>
+                  <h3>{data.judul}</h3>
+                  <p>{data.deskripsi}</p>
+                  <small>Diposting oleh: {data.creatorName}</small>
+                </div>
+              );
+            })}
+            {!iklanCollection && <p>Memuat iklan...</p>}
           </div>
         </div>
       </div>
