@@ -29,11 +29,11 @@ export default function Home() {
   return (
     <div className={styles.pageContainer}>
       <Head>
-        <title>Login - WargaKoba</title>
+        <title>Login - Cluster Koba Village Purwakarta</title>
       </Head>
 
       <div className={styles.visualSide}>
-        <h1>Selamat Datang di WargaKoba</h1>
+        <h1>Selamat Datang di Cluster Koba Village Purwakarta</h1>
         <p>Solusi digital terintegrasi untuk manajemen data warga yang efisien, modern, dan aman.</p>
       </div>
 
