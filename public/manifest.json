@@ -1,0 +1,16 @@
+{
+    "name": "WargaKoba App",
+    "short_name": "WargaKoba",
+    "description": "Aplikasi Manajemen Warga RT Koba",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4A90E2",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "type": "image/x-icon"
+        }
+    ]
+}

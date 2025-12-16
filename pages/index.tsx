@@ -37,54 +37,56 @@ export default function Home() {
         <title>Login - Cluster Koba Village Purwakarta</title>
       </Head>
 
-      <div className={styles.visualSide}>
-        <h1>Selamat Datang di Cluster Koba Village Purwakarta</h1>
-        <p>Solusi digital terintegrasi untuk manajemen data warga yang efisien, modern, dan aman.</p>
-      </div>
+      <div className={styles.topRow}>
+        <div className={styles.visualSide}>
+          <h1>Selamat Datang di Cluster Koba Village Purwakarta</h1>
+          <p>Solusi digital terintegrasi untuk manajemen data warga yang efisien, modern, dan aman.</p>
+        </div>
 
-      <div className={styles.formSide}>
-        <div className={styles.formWrapper}>
-          <div className={styles.header}>
-            <h2>Masuk ke Akun Anda</h2>
-            <p>Silakan masukkan kredensial Anda untuk melanjutkan.</p>
-          </div>
-          <form className={styles.form} onSubmit={handleLogin}>
-            
-            <div className={styles.inputGroup}>
-              <FaEnvelope className={styles.inputIcon} />
-              <input
-                id="email"
-                className={styles.input}
-                type="email"
-                placeholder="Email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+        <div className={styles.formSide}>
+          <div className={styles.formWrapper}>
+            <div className={styles.header}>
+              <h2>Masuk ke Akun Anda</h2>
+              <p>Silakan masukkan kredensial Anda untuk melanjutkan.</p>
             </div>
+            <form className={styles.form} onSubmit={handleLogin}>
+              
+              <div className={styles.inputGroup}>
+                <FaEnvelope className={styles.inputIcon} />
+                <input
+                  id="email"
+                  className={styles.input}
+                  type="email"
+                  placeholder="Email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
 
-            <div className={styles.inputGroup}>
-              <FaLock className={styles.inputIcon} />
-              <input
-                id="password"
-                className={styles.input}
-                type="password"
-                placeholder="Kata Sandi"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className={styles.inputGroup}>
+                <FaLock className={styles.inputIcon} />
+                <input
+                  id="password"
+                  className={styles.input}
+                  type="password"
+                  placeholder="Kata Sandi"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              
+              {error && <p className={styles.error}>{`Error: ${error.code.replace('auth/', '').replace(/-/g, ' ')}`}</p>}
+              
+              <button className={styles.button} type="submit" disabled={loading}>
+                {loading ? 'Memproses...' : 'Login'}
+              </button>
+            </form>
+
+            <div className={styles.footer}>
+              <p>Belum punya akun? <Link href="/register">Daftar di sini</Link></p>
             </div>
-            
-            {error && <p className={styles.error}>{`Error: ${error.code.replace('auth/', '').replace(/-/g, ' ')}`}</p>}
-            
-            <button className={styles.button} type="submit" disabled={loading}>
-              {loading ? 'Memproses...' : 'Login'}
-            </button>
-          </form>
-
-          <div className={styles.footer}>
-            <p>Belum punya akun? <Link href="/register">Daftar di sini</Link></p>
           </div>
         </div>
       </div>

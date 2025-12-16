@@ -11,6 +11,12 @@
     background-color: #fff;
 }
 
+.topRow {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
 .visualSide {
     flex: 1;
     background: linear-gradient(45deg, #4A90E2 0%, #0070F3 100%);

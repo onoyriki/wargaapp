@@ -9,6 +9,7 @@ import Layout from '../../components/Layout';
 import { withAuth } from '../../components/withAuth';
 import styles from '../../styles/Form.module.css';
 import { FaPlus, FaTrash, FaEdit, FaSave } from 'react-icons/fa';
+import imageCompression from 'browser-image-compression';
 
 interface Pengumuman {
     id: string;
@@ -66,8 +67,17 @@ function KelolaPengumuman() {
                     }
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
-                        const storageRef = ref(storage, `pengumuman/${Date.now()}_${file.name}`);
-                        await uploadBytes(storageRef, file);
+                        // Compress
+                        const options = {
+                            maxSizeMB: 0.5,
+                            maxWidthOrHeight: 1280,
+                            useWebWorker: true,
+                            fileType: 'image/webp'
+                        };
+                        const compressedFile = await imageCompression(file, options);
+
+                        const storageRef = ref(storage, `pengumuman/${Date.now()}_${file.name.split('.')[0]}.webp`);
+                        await uploadBytes(storageRef, compressedFile);
                         const url = await getDownloadURL(storageRef);
                         imageUrls.push(url);
                     }
@@ -115,9 +125,9 @@ function KelolaPengumuman() {
             <Head><title>Kelola Pengumuman - WargaKoba</title></Head>
             <div className={styles.container}>
                 <div className={styles.formContainer}>
-                     <header className={styles.header}>
+                    <header className={styles.header}>
                         <h1>{editingId ? 'Edit Pengumuman' : 'Buat Pengumuman Baru'}</h1>
-                     </header>
+                    </header>
                     <form onSubmit={handleSubmit} className={styles.form}>
                         {error && <p className={styles.errorBanner}>{error}</p>}
                         <div className={styles.inputGroup}><label htmlFor="judul">Judul</label><input id="judul" type="text" value={judul} onChange={(e) => setJudul(e.target.value)} /></div>

@@ -1,4 +1,3 @@
-
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -13,6 +12,7 @@ import AdminDashboard from '../components/AdminDashboard';
 import styles from '../styles/Dashboard.module.css';
 import wargaStyles from '../styles/WargaDashboard.module.css';
 import { FaUsers, FaTasks, FaUserCheck, FaArrowRight, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import imageCompression from 'browser-image-compression';
 import { useState, FC, FormEvent } from 'react';
 
 // 1. Define strict types
@@ -47,7 +47,7 @@ const IklanCard: FC<IklanCardProps> = ({ iklan, onEdit, onDelete }) => {
             <h4>{iklan.judul}</h4>
             <p>{iklan.deskripsi}</p>
             {iklan.images && iklan.images.map((url, idx) => (
-                <img key={idx} src={url} alt={`Iklan ${idx+1}`} className={wargaStyles.iklanImage} />
+                <img key={idx} src={url} alt={`Iklan ${idx + 1}`} className={wargaStyles.iklanImage} />
             ))}
             <small>Diposting oleh: {iklan.creatorName}</small>
             {canEdit && (
@@ -89,6 +89,27 @@ function WargaDashboard() {
                 return;
             }
         }
+
+        // --- Tambahan: handle upload images ---
+        let imageUrls: string[] = [];
+        if (files && files.length > 0) {
+            const uploadPromises = Array.from(files).slice(0, 3).map(async (file) => {
+                // Compress
+                const options = {
+                    maxSizeMB: 0.5,
+                    maxWidthOrHeight: 1280,
+                    useWebWorker: true,
+                    fileType: 'image/webp'
+                };
+                const compressedFile = await imageCompression(file, options);
+
+                const storageRef = ref(storage, `iklan/${user.uid}/${Date.now()}_${file.name.split('.')[0]}.webp`);
+                await uploadBytes(storageRef, compressedFile);
+                return getDownloadURL(storageRef);
+            });
+            imageUrls = await Promise.all(uploadPromises);
+        }
+        // --- End tambahan ---
 
         if (formState.id) {
             await updateDoc(doc(db, 'iklan', formState.id), {

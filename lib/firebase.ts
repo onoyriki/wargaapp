@@ -20,4 +20,18 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// Enable Firestore Persistence
+import { enableIndexedDbPersistence } from 'firebase/firestore';
+
+if (typeof window !== "undefined") {
+  enableIndexedDbPersistence(db)
+    .catch((err) => {
+      if (err.code == 'failed-precondition') {
+        console.warn('Firestore persistence failed: Multiple tabs open');
+      } else if (err.code == 'unimplemented') {
+        console.warn('Firestore persistence not supported in this browser');
+      }
+    });
+}
+
 export { app, auth, db, storage };
