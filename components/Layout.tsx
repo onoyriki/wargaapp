@@ -10,7 +10,7 @@ import {
     FaTachometerAlt, FaUsers, FaSignOutAlt, FaBars, FaTimes,
     FaUsersCog, FaShieldAlt, FaUserCircle, FaFileInvoiceDollar,
     FaChartLine, FaMoneyBillWave, FaBullhorn, FaAngleLeft, FaAngleRight,
-    FaClipboardCheck, FaMapMarkedAlt, FaServer
+    FaClipboardCheck, FaMapMarkedAlt, FaServer, FaAd
 } from 'react-icons/fa';
 
 const navConfig = {
@@ -18,6 +18,7 @@ const navConfig = {
         { href: '/dashboard', label: 'Dashboard', icon: <FaTachometerAlt /> },
         { href: '/admin/verifikasi', label: 'Verifikasi Pengguna', icon: <FaUsersCog /> },
         { href: '/admin/kelola-pengumuman', label: 'Kelola Pengumuman', icon: <FaBullhorn /> },
+        { href: '/admin/kelola-iklan', label: 'Kelola Iklan', icon: <FaAd /> },
         { href: '/data-warga', label: 'Data Warga', icon: <FaUsers /> },
         { href: '/admin/kelola-iuran', label: 'Kelola Iuran', icon: <FaFileInvoiceDollar /> },
         { href: '/admin/kelola-patroli', label: 'Kelola Titik Patroli', icon: <FaMapMarkedAlt /> },
@@ -28,7 +29,6 @@ const navConfig = {
     satpam: [
         { href: '/dashboard', label: 'Dashboard', icon: <FaTachometerAlt /> },
         { href: '/satpam/patroli', label: 'Mulai Patroli', icon: <FaClipboardCheck /> },
-        { href: '/data-warga', label: 'Data Warga', icon: <FaUsers /> },
         { href: '/laporan-patroli', label: 'Laporan Patroli', icon: <FaShieldAlt /> },
     ],
     warga: [

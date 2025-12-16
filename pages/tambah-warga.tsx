@@ -145,4 +145,4 @@ function TambahWarga() {
     );
 }
 
-export default withAuth(TambahWarga);
+export default withAuth(TambahWarga, ['admin', 'warga']);

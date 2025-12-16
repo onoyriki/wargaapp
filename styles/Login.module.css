@@ -18,22 +18,37 @@
 }
 
 .visualSide {
-    flex: 1;
-    background: linear-gradient(45deg, #4A90E2 0%, #0070F3 100%);
+    flex: 2;
+    /* Take up more space (66%) */
+    background: linear-gradient(135deg, #4A90E2 0%, #0070F3 100%);
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding: 3rem;
-    text-align: center;
+    /* Center vertically */
+    align-items: flex-start;
+    /* Align text left */
+    padding: 3rem 4rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.visualContent {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
 }
 
 .visualSide h1 {
-    font-size: 3rem;
+    font-size: 2.25rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    letter-spacing: -1px;
+    letter-spacing: -0.5px;
 }
 
 .visualSide p {
@@ -173,7 +188,7 @@
         flex: 0;
         padding: 4rem 1.5rem;
     }
-    
+
     .visualSide h1 {
         font-size: 2.25rem;
     }
@@ -188,64 +203,332 @@
     }
 }
 
-/* Announcements Section */
+/* Announcements Embedded Section */
 .announcementsSection {
     width: 100%;
-    background-color: #f7f8fc;
-    padding: 2rem;
-    border-top: 1px solid #e2e8f0;
-}
-
-.announcementsSection h2 {
-    font-size: 1.5rem;
-    color: #2d3748;
-    margin-bottom: 1rem;
-    text-align: center;
+    margin-top: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .announcementsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
 }
 
-.announcementSection {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.announcementsGrid::-webkit-scrollbar {
+    height: 6px;
 }
 
-.announcementSection h2 {
-    font-size: 1.2rem;
-    color: #2d3748;
-    margin-bottom: 1rem;
-    text-align: center;
+.announcementsGrid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.announcementsGrid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
 }
 
 .announcementItem {
+    min-width: 160px;
+    width: 160px;
     background: white;
-    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
 }
 
-.announcementItem h3 {
-    font-size: 1.1rem;
-    color: #2d3748;
-    margin: 0 0 0.5rem 0;
+.announcementItem:hover {
+    transform: translateY(-5px);
 }
 
-.announcementItem p {
+.thumbnailWrapper {
+    height: 100px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.announcementThumbnail,
+.placeholderThumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 0;
+    border-radius: 0;
+}
+
+.placeholderThumbnail {
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e0;
+}
+
+.announcementText {
+    padding: 0.8rem;
+}
+
+.announcementText h3 {
     font-size: 0.9rem;
-    color: #4a5568;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.4;
+    font-weight: 700;
+    margin: 0 0 0.3rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.announcementItem small {
-    font-size: 0.8rem;
+.announcementText small {
+    font-size: 0.75rem;
     color: #718096;
+    text-transform: uppercase;
+    font-weight: 600;
+    background: #edf2f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.promoBox {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: left;
+    max-width: 450px;
+    animation: fadeIn 1s ease-out;
+}
+
+.promoBox h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.promoBox ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.promoBox li {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1.2rem;
+    position: relative;
+    opacity: 0.9;
+}
+
+.promoBox li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #81e6d9;
+    font-weight: bold;
+}
+
+.announcementThumbnail {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+    background-color: #edf2f7;
+}
+
+.placeholderThumbnail {
+    width: 100%;
+    height: 150px;
+    background-color: #e2e8f0;
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a0aec0;
+    font-size: 2rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modalContent {
+    background: white;
+    border-radius: 16px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modalClose {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #4a5568;
+    z-index: 10;
+}
+
+.modalClose:hover {
+    background: rgba(0, 0, 0, 0.2);
+    transform: rotate(90deg);
+}
+
+.modalHeader {
+    padding: 2rem 2rem 1rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modalHeader h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 0.5rem 0;
+    padding-right: 2rem;
+}
+
+.modalBadge {
+    display: inline-block;
+    background: linear-gradient(135deg, #4A90E2 0%, #0070F3 100%);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modalBody {
+    padding: 2rem;
+}
+
+.modalText {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #2d3748;
+    margin: 0 0 1.5rem 0;
+    white-space: pre-wrap;
+}
+
+.modalImages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.modalImages img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s;
+}
+
+.modalImages img:hover {
+    transform: scale(1.05);
+}
+
+.modalFooter {
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.modalFooter small {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modalContent {
+        max-height: 95vh;
+        border-radius: 16px 16px 0 0;
+        margin-top: auto;
+    }
+
+    .modalHeader {
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+    }
+
+    .modalHeader h2 {
+        font-size: 1.5rem;
+    }
+
+    .modalBody {
+        padding: 1.5rem;
+    }
+
+    .modalImages {
+        grid-template-columns: 1fr;
+    }
+
+    .modalImages img {
+        height: 200px;
+    }
 }

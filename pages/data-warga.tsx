@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -78,8 +77,8 @@ function DataWarga() {
         // Warga only sees their own family. No pagination needed really, but kept for consistency.
         // Actually, for 'warga' role, we just fetch their own KK.
         q = query(wargaRef, where("noKK", "==", userData.noKK), where("statusHubungan", "==", "Kepala Keluarga"));
-      } else {
-        // Admin/Satpam sees all KKs
+      } else if (userData.role === 'admin') {
+        // Admin sees all KKs
         // Note: 'orderBy' is required for 'limit' and cursor. 
         // Ideally index on statusHubungan + nama
         // For now we assume simple index exists or just filter client side if small? 
@@ -96,6 +95,9 @@ function DataWarga() {
         }
 
         q = query(wargaRef, ...constraints);
+      } else {
+        // Role lain tidak diizinkan mengakses data warga.
+        return;
       }
 
       const snapshot = await getDocs(q);
@@ -445,4 +447,4 @@ function DataWarga() {
   );
 }
 
-export default withAuth(DataWarga); // No roles needed, logic is handled inside
+export default withAuth(DataWarga, ['admin', 'warga']); // Satpam tidak boleh akses data warga

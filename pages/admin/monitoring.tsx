@@ -3,7 +3,7 @@ import { withAuth } from '../../components/withAuth';
 import Layout from '../../components/Layout';
 import { db } from '../../lib/firebase';
 import { collection, getCountFromServer } from 'firebase/firestore';
-import { FaUsers, FaShieldAlt, FaBullhorn, FaAd, FaSync, FaServer } from 'react-icons/fa';
+import { FaUsers, FaShieldAlt, FaBullhorn, FaAd, FaSync, FaServer, FaChartLine } from 'react-icons/fa';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -141,6 +141,45 @@ const MonitoringDashboard = () => {
                         <div className={styles.cardIcon} style={{ color: '#38b2ac' }}><FaServer /></div>
                         <div className={styles.cardLabel}>Est. Storage</div>
                         <div className={styles.cardValue}>{estimatedStorageMB} <span style={{ fontSize: '1rem' }}>MB</span></div>
+                    </div>
+                </div>
+
+                {/* Billing ESTIMATOR */}
+                <div className={styles.grid}>
+                    <div className={styles.card} style={{ borderColor: Number(estimatedStorageMB) > 5000 ? '#e53e3e' : '#48bb78', borderLeftWidth: '5px' }}>
+                        <div className={styles.cardIcon} style={{ color: '#48bb78' }}>
+                            <FaChartLine />
+                        </div>
+                        <div className={styles.cardLabel}>Est. Biaya (Bulanan)</div>
+                        <div className={styles.cardValue}>
+                            {Number(estimatedStorageMB) > 5000
+                                ? `$${(((Number(estimatedStorageMB) - 5000) / 1024) * 0.026).toFixed(4)}`
+                                : '$0.00'
+                            }
+                        </div>
+                        <small style={{ color: '#718096' }}>
+                            {Number(estimatedStorageMB) > 5000 ? 'Over Free Limit (Blaze)' : 'Free Tier (Spark) Safe'}
+                        </small>
+                    </div>
+                    <div className={styles.card}>
+                        <div className={styles.cardLabel} style={{ marginBottom: '1rem' }}>Aksi Cepat</div>
+                        <a
+                            href="https://console.firebase.google.com/u/0/project/wargaapp-56a1f/usage"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                display: 'block',
+                                background: '#3182ce',
+                                color: 'white',
+                                padding: '0.8rem',
+                                borderRadius: '6px',
+                                textAlign: 'center',
+                                textDecoration: 'none',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Buka Billing Console ↗
+                        </a>
                     </div>
                 </div>
 

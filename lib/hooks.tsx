@@ -7,7 +7,7 @@ import { User } from 'firebase/auth';
 
 // Expanded UserData interface to be comprehensive
 interface UserData {
-  id?: string; 
+  id?: string;
   email: string;
   role: string;
   verified: boolean;
@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('[Auth Hook] Effect 1 - loadingAuth:', loadingAuth, 'user:', user?.email);
     if (loadingAuth) {
       setLoading(true);
       return;
@@ -47,9 +48,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const userDocRef = doc(db, 'users', user.uid);
       const unsubscribe = onSnapshot(userDocRef, (userDoc) => {
         if (userDoc.exists()) {
-          // FIX: Handle potential null email from Firebase user object
-          setUserData({ email: user.email || '', ...userDoc.data() });
+          const data = userDoc.data() as any;
+          console.log('[Auth Hook] User doc exists, role:', data?.role);
+          setUserData({ email: user.email || '', ...data });
+
+          // Only keep loading for warga role (will be resolved in Effect 2)
+          if (data?.role !== 'warga') {
+            console.log('[Auth Hook] Non-warga role, setting loading to false');
+            setLoading(false);
+          } else {
+            console.log('[Auth Hook] Warga role, waiting for Effect 2');
+          }
         } else {
+          console.log('[Auth Hook] User doc does not exist');
           setUserData(null);
           setLoading(false);
         }
@@ -61,6 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       return () => unsubscribe();
     } else {
+      console.log('[Auth Hook] No user, setting loading to false');
       setUserData(null);
       setLoading(false);
     }
@@ -68,9 +80,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Effect 2: Fetch corresponding 'warga' data once we have the user's email
   useEffect(() => {
-    if (userData?.email) {
+    if (userData?.email && userData?.role === 'warga') {
       const wargaQuery = query(collection(db, 'warga'), where("email", "==", userData.email));
-      
+
       const unsubscribe = onSnapshot(wargaQuery, (querySnapshot) => {
         if (!querySnapshot.empty) {
           const wargaDoc = querySnapshot.docs[0];
@@ -78,7 +90,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUserData(prevData => ({
             ...prevData,
             ...wargaDoc.data(),
-            id: wargaDoc.id, // This solves the problem
+            id: wargaDoc.id,
           }));
         }
         setLoading(false);
@@ -88,10 +100,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       return () => unsubscribe();
-    } else if (!loadingAuth && !user) {
-        setLoading(false);
     }
-  }, [userData?.email, user, loadingAuth]);
+  }, [userData?.email, userData?.role]);
 
   return (
     <AuthContext.Provider value={{ user, userData, loading }}>

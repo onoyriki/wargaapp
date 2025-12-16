@@ -59,8 +59,24 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>, a
     }, [user, userData, loading, router]);
 
     // Tampilkan loading spinner jika masih dalam proses otentikasi/otorisasi
-    if (loading || !user || !userData) {
+    if (loading) {
       return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+    }
+
+    // Jika sudah tidak loading tapi user belum ada, arahkan ke login
+    if (!user) {
+      return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Redirecting...</div>;
+    }
+
+    // Jika user ada tapi userData tidak tersedia, jangan stuck di loading.
+    // Ini biasanya berarti dokumen users/{uid} tidak ada atau tidak bisa dibaca (rules/permission).
+    if (!userData) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', gap: 12 }}>
+          <div>Gagal memuat data pengguna. Pastikan akun Anda sudah terdaftar di database dan memiliki akses.</div>
+          <button onClick={() => router.replace('/')} style={{ padding: '10px 14px', cursor: 'pointer' }}>Kembali ke Login</button>
+        </div>
+      );
     }
 
     // Jika semua pengecekan lolos, render komponen

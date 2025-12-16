@@ -11,7 +11,7 @@ import Layout from '../components/Layout';
 import AdminDashboard from '../components/AdminDashboard';
 import styles from '../styles/Dashboard.module.css';
 import wargaStyles from '../styles/WargaDashboard.module.css';
-import { FaUsers, FaTasks, FaUserCheck, FaArrowRight, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaUserCheck, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import imageCompression from 'browser-image-compression';
 import { useState, FC, FormEvent } from 'react';
 
@@ -175,7 +175,6 @@ function WargaDashboard() {
 function Dashboard() {
     const { user, userData, loading } = useAuth();
     const router = useRouter();
-    const [wargaCollection, loadingWarga] = useCollection(collection(db, 'warga'));
 
     if (loading) {
         return <Layout><div>Memuat...</div></Layout>;
@@ -213,24 +212,10 @@ function Dashboard() {
                     <p className={styles.userEmail}>{userData?.nama || user?.email}</p>
                 </header>
                 <div className={styles.grid}>
-                    <div className={styles.statCard}>
-                        <FaUsers className={styles.statCardIcon} />
-                        <div>
-                            <h3>Total Warga Terdaftar</h3>
-                            <p>{loadingWarga ? '...' : wargaCollection?.docs.length ?? 0}</p>
-                        </div>
-                    </div>
-                    <Link href="/data-warga" className={styles.actionCard}>
-                        <FaTasks className={styles.actionCardIcon} />
-                        <h3>Lihat Data Warga</h3>
-                        <p>Akses daftar lengkap semua warga yang terdaftar di dalam sistem.</p>
-                        <FaArrowRight className={styles.actionCardArrow} />
-                    </Link>
                     <Link href="/laporan-patroli" className={styles.actionCard}>
                         <FaUserCheck className={styles.actionCardIcon} />
                         <h3>Laporan Patroli</h3>
                         <p>Lihat dan kelola laporan patroli keamanan untuk menjaga lingkungan.</p>
-                        <FaArrowRight className={styles.actionCardArrow} />
                     </Link>
                 </div>
             </div>
