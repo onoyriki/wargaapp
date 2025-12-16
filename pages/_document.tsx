@@ -9,6 +9,9 @@ export default function Document() {
         {/* FIX: Changed crossOrigin to a valid value */}
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#4A90E2" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
       </Head>
       <body>
         <Main />

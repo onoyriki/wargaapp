@@ -17,8 +17,12 @@
     flex-direction: column;
     padding: 1.25rem;
     border-right: 1px solid #374151; 
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
     z-index: 100;
+}
+
+.sidebarMinimized {
+    width: 60px;
 }
 
 .sidebarHeader {
@@ -28,12 +32,25 @@
     margin-bottom: 2rem;
 }
 
-.sidebarHeader h2 {
-    margin: 0;
-    font-size: 1.6rem; /* Reduced font size */
-    font-weight: 700;
+.headerButtons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.minimizeButton {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.minimizeButton:hover {
+    background-color: #374151;
     color: #fff;
-    letter-spacing: 1px;
 }
 
 .closeButton {
@@ -81,6 +98,22 @@
     font-size: 1.1rem; /* Reduced icon size */
 }
 
+
+
+.navLinkMinimized {
+    justify-content: center;
+    padding: 0.8rem 0.5rem;
+    gap: 0;
+}
+
+.navLinkMinimized svg {
+    font-size: 4.5rem;
+}
+
+.hidden {
+    display: none;
+}
+
 .sidebarFooter {
     margin-top: auto; 
 }
@@ -110,6 +143,18 @@
 
 .logoutButton svg {
     font-size: 1.1rem; /* Match nav icons */
+}
+
+
+
+.logoutButtonMinimized {
+    justify-content: center;
+    padding: 0.8rem 0.5rem;
+    gap: 0;
+}
+
+.logoutButtonMinimized svg {
+    font-size: 4.5rem;
 }
 
 .mainContent {
@@ -148,6 +193,11 @@
         left: 0;
         height: 100%;
         transform: translateX(-100%);
+        width: 250px; /* Reset width for mobile */
+    }
+
+    .sidebarMinimized {
+        width: 250px; /* No minimize on mobile */
     }
 
     .sidebarOpen {
@@ -160,6 +210,10 @@
 
     .closeButton {
         display: block;
+    }
+
+    .minimizeButton {
+        display: none; /* Hide minimize on mobile */
     }
 
     .mainContent {

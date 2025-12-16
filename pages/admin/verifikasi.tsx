@@ -46,7 +46,7 @@ function AdminVerificationPage() {
     };
 
     if (userData) {
-        fetchUsers();
+      fetchUsers();
     }
 
   }, [userData]);
@@ -61,7 +61,7 @@ function AdminVerificationPage() {
       alert('Failed to update user.');
     }
   };
-  
+
   if (loading) {
     return <Layout><p>Loading users...</p></Layout>;
   }
@@ -79,44 +79,44 @@ function AdminVerificationPage() {
         <h1>User Management</h1>
         {error && <p className={styles.error}>{error}</p>}
         <div className={styles.tableContainer}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Email</th>
-                  <th>Address</th>
-                  <th>Role</th>
-                  <th>Verified</th>
-                  <th>Actions</th>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Role</th>
+                <th>Verified</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(user => (
+                <tr key={user.id}>
+                  <td data-label="Email">{user.email}</td>
+                  <td data-label="Address">{user.alamatBlok}</td>
+                  <td data-label="Role">
+                    <select
+                      value={user.role}
+                      onChange={(e) => handleUpdateUser(user.id, e.target.value, user.verified)}
+                      className={styles.select}
+                    >
+                      <option value="warga">Warga</option>
+                      <option value="satpam">Satpam</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </td>
+                  <td data-label="Verified">{user.verified ? 'Yes' : 'No'}</td>
+                  <td data-label="Actions">
+                    <button
+                      onClick={() => handleUpdateUser(user.id, user.role, !user.verified)}
+                      className={`${styles.button} ${user.verified ? styles.unverifyButton : styles.verifyButton}`}>
+                      {user.verified ? 'Un-verify' : 'Verify'}
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {users.map(user => (
-                  <tr key={user.id}>
-                    <td>{user.email}</td>
-                    <td>{user.alamatBlok}</td>
-                    <td>
-                      <select 
-                        value={user.role} 
-                        onChange={(e) => handleUpdateUser(user.id, e.target.value, user.verified)}
-                        className={styles.select}
-                      >
-                        <option value="warga">Warga</option>
-                        <option value="satpam">Satpam</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    </td>
-                    <td>{user.verified ? 'Yes' : 'No'}</td>
-                    <td>
-                      <button 
-                        onClick={() => handleUpdateUser(user.id, user.role, !user.verified)}
-                        className={`${styles.button} ${user.verified ? styles.unverifyButton : styles.verifyButton}`}>
-                        {user.verified ? 'Un-verify' : 'Verify'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </Layout>
