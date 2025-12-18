@@ -76,7 +76,7 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>, a
     }
     
     // Prevent rendering child component if authorization check fails, wait for redirect
-    if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(userData.role)) {
+    if (allowedRoles && allowedRoles.length > 0 && userData.role && !allowedRoles.includes(userData.role)) {
       return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Redirecting to dashboard...</div>;
     }
 

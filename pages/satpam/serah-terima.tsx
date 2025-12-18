@@ -11,7 +11,7 @@ import styles from '../../styles/Form.module.css';
 import { FaSave, FaExchangeAlt } from 'react-icons/fa';
 
 function SerahTerimaPage() {
-  const { userData } = useAuth();
+  const { user, userData } = useAuth(); // Destructure user object
   const router = useRouter();
   
   const [shift, setShift] = useState('Pagi');
@@ -28,7 +28,7 @@ function SerahTerimaPage() {
     setError(null);
     setSuccess(null);
 
-    if (!userData) {
+    if (!user || !userData) { // Ensure user and userData are loaded
       setError('Gagal memvalidasi pengguna. Silakan login kembali.');
       setLoading(false);
       return;
@@ -41,7 +41,7 @@ function SerahTerimaPage() {
         kejadian: kejadian || 'Tidak ada kejadian khusus',
         inventaris: inventaris || 'Lengkap sesuai daftar',
         satpamName: userData.nama || userData.email,
-        satpamId: userData.uid,
+        satpamId: user.uid, // Correctly use user.uid
         createdAt: serverTimestamp(),
       });
 

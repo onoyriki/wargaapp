@@ -1,8 +1,8 @@
 
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, initializeFirestore, persistentLocalCache, memoryLocalCache } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, initializeFirestore, persistentLocalCache, memoryLocalCache, Firestore } from 'firebase/firestore';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCOKhXXn7IyDrwrS8U8bnzeC5XfJWqWIf4",
@@ -15,18 +15,19 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
-const storage = getStorage(app);
+const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const auth: Auth = getAuth(app);
+const storage: FirebaseStorage = getStorage(app);
 
 // Initialize Firestore with persistence
-let db;
+let db: Firestore;
+
 // Check if running in a browser environment
 if (typeof window !== 'undefined') {
   try {
-    // Use initializeFirestore with persistent cache settings
+    // Use initializeFirestore with default persistent cache settings
     db = initializeFirestore(app, {
-      localCache: persistentLocalCache({ tabManager: 'multi' }) 
+      localCache: persistentLocalCache()
     });
   } catch (err) {
     console.warn('Firestore persistence initialization failed:', err);

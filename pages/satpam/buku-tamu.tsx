@@ -12,7 +12,7 @@ import styles from '../../styles/Form.module.css';
 import { FaSave, FaCamera, FaAddressBook } from 'react-icons/fa';
 
 function BukuTamuPage() {
-  const { userData } = useAuth();
+  const { user, userData } = useAuth(); // Destructure user object
   const router = useRouter();
   
   const [namaTamu, setNamaTamu] = useState('');
@@ -70,7 +70,7 @@ function BukuTamuPage() {
         keperluan,
         fotoKtpUrl: downloadURL,
         satpamName: userData?.nama || userData?.email,
-        satpamId: userData?.uid,
+        satpamId: user?.uid, // Correctly use user.uid
         waktuMasuk: serverTimestamp(),
       });
 
