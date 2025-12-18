@@ -1,16 +1,27 @@
 {
-    "name": "WargaKoba App",
-    "short_name": "WargaKoba",
-    "description": "Aplikasi Manajemen Warga RT Koba",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#4A90E2",
-    "icons": [
-        {
-            "src": "/favicon.ico",
-            "sizes": "64x64 32x32 24x24 16x16",
-            "type": "image/x-icon"
-        }
-    ]
+  "name": "WargaKoba - Cluster Koba Village Purwakarta",
+  "short_name": "WargaKoba",
+  "description": "Aplikasi digital untuk manajemen warga Cluster Koba Village Purwakarta.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0070f3",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

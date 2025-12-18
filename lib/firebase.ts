@@ -1,7 +1,7 @@
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, persistentLocalCache, memoryLocalCache } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
@@ -17,21 +17,27 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
-const db = getFirestore(app);
 const storage = getStorage(app);
 
-// Enable Firestore Persistence
-import { enableIndexedDbPersistence } from 'firebase/firestore';
-
-if (typeof window !== "undefined") {
-  enableIndexedDbPersistence(db)
-    .catch((err) => {
-      if (err.code == 'failed-precondition') {
-        console.warn('Firestore persistence failed: Multiple tabs open');
-      } else if (err.code == 'unimplemented') {
-        console.warn('Firestore persistence not supported in this browser');
-      }
+// Initialize Firestore with persistence
+let db;
+// Check if running in a browser environment
+if (typeof window !== 'undefined') {
+  try {
+    // Use initializeFirestore with persistent cache settings
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: 'multi' }) 
     });
+  } catch (err) {
+    console.warn('Firestore persistence initialization failed:', err);
+    // Fallback to in-memory persistence if IndexedDB fails
+    db = initializeFirestore(app, {
+        localCache: memoryLocalCache()
+    });
+  }
+} else {
+  // For server-side rendering, use getFirestore without persistence
+  db = getFirestore(app);
 }
 
 export { app, auth, db, storage };

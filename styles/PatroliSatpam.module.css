@@ -1,158 +1,269 @@
+
 .container {
-    max-width: 600px;
+    padding: 1.5rem;
+    max-width: 900px;
     margin: 0 auto;
-    padding-bottom: 4rem;
 }
 
 .header {
-    margin-bottom: 2rem;
     text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
 }
 
 .subtitle {
-    color: #666;
-    margin-top: 0.5rem;
-}
-
-.timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.card {
-    display: flex;
-    gap: 1rem;
-    background: white;
-    padding: 1.25rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    align-items: center;
-    border-left: 5px solid #eee;
-}
-
-.cardDone {
-    border-left-color: #4CAF50;
-    opacity: 0.8;
-}
-
-.cardIcon {
-    font-size: 1.5rem;
-    color: #4CAF50;
-    width: 40px;
-    display: flex;
-    justify-content: center;
-}
-
-.numberBadge {
-    background: #eee;
-    color: #555;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: bold;
-}
-
-.cardContent {
-    flex: 1;
-}
-
-.cardContent h3 {
-    margin: 0;
     font-size: 1.1rem;
-    color: #333;
+    color: #718096;
 }
 
-.cardContent p {
-    margin: 0.25rem 0 0.5rem 0;
-    font-size: 0.85rem;
-    color: #777;
+.loading {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: #a0aec0;
 }
 
-.checkButton {
-    background: #2196F3;
-    color: white;
+/* Shift Selection */
+.shiftSelection {
+    text-align: center;
+    background-color: #fff;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.shiftSelection h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 2rem;
+}
+
+.shiftButtons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.shiftButtons button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
     border: none;
-    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    min-width: 220px;
+    justify-content: center;
+}
+
+.shiftButtons button:first-child {
+    background-color: #f6ad55; /* Orange */
+    color: white;
+}
+
+.shiftButtons button:first-child:hover {
+    background-color: #ed8936;
+    transform: translateY(-2px);
+}
+
+.shiftButtons button:last-child {
+    background-color: #4a5568; /* Dark Gray */
+    color: white;
+}
+.shiftButtons button:last-child:hover {
+    background-color: #2d3748;
+    transform: translateY(-2px);
+}
+
+/* Shift Header */
+.shiftHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #edf2f7;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.shiftHeader h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.changeShiftBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid #cbd5e0;
+    color: #4a5568;
+    padding: 0.5rem 0.8rem;
     border-radius: 6px;
     font-size: 0.9rem;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.changeShiftBtn:hover {
+    background-color: #e2e8f0;
+    border-color: #a0aec0;
+}
+
+
+/* Timeline & Cards */
+.timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    width: fit-content;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease-in-out;
+}
+
+.cardDone {
+    background-color: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.cardIcon {
+    flex-shrink: 0;
+}
+
+.numberBadge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.cardDone .cardIcon svg {
+    color: #4ade80;
+    font-size: 2.25rem;
+}
+
+.cardContent h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 0.25rem 0;
+}
+
+.cardContent p {
+    font-size: 0.95rem;
+    color: #718096;
+    margin: 0;
+    line-height: 1.5;
 }
 
 .statusBadge {
     display: inline-block;
-    background: #e8f5e9;
-    color: #2e7d32;
+    margin-top: 0.75rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #16a34a;
+    background-color: #dcfce7;
     padding: 0.25rem 0.75rem;
-    border-radius: 99px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    border-radius: 9999px;
 }
 
-/* Modal Styles */
+.checkButton {
+    margin-top: 0.75rem;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkButton:hover {
+    background-color: #3182ce;
+}
+
+/* Modal */
 .modalOverlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     z-index: 1000;
     padding: 1rem;
 }
 
 .modal {
     background: white;
-    width: 100%;
-    max-width: 450px;
     border-radius: 12px;
-    overflow: hidden;
-    animation: slideUp 0.3s ease-out;
+    width: 100%;
+    max-width: 500px;
+    animation: slide-up 0.3s ease-out;
 }
 
-@keyframes slideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+@keyframes slide-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .modalHeader {
-    padding: 1rem;
-    background: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eee;
 }
 
 .modalHeader h2 {
+    font-size: 1.25rem;
     margin: 0;
-    font-size: 1.1rem;
+    color: #2d3748;
 }
 
 .closeBtn {
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 2rem;
+    color: #a0aec0;
     cursor: pointer;
-    color: #666;
 }
 
 .modalForm {
@@ -165,36 +276,55 @@
 .inputGroup {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
 }
 
 .inputGroup label {
     font-weight: 600;
-    font-size: 0.9rem;
-    color: #444;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+}
+
+.inputGroup textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.inputGroup textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
 }
 
 /* Photo Upload */
 .photoPlaceholder {
-    height: 180px;
-    border: 2px dashed #ccc;
+    width: 100%;
+    height: 200px;
+    border: 2px dashed #cbd5e0;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    color: #888;
+    align-items: center;
     cursor: pointer;
-    background-color: #fafafa;
+    background-color: #f7fafc;
+    color: #a0aec0;
+    transition: all 0.2s;
     background-size: cover;
     background-position: center;
-    transition: all 0.2s;
 }
 
 .photoPlaceholder:hover {
-    border-color: #2196F3;
-    color: #2196F3;
-    background-color: #e3f2fd;
+    background-color: #edf2f7;
+    border-color: #a0aec0;
+}
+
+.photoPlaceholder span {
+    margin-top: 0.75rem;
+    font-weight: 500;
 }
 
 /* Radio Group */
@@ -205,69 +335,72 @@
 
 .radioOption {
     flex: 1;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
+    gap: 0.75rem;
     transition: all 0.2s;
+    font-weight: 600;
 }
 
-.radioOption input {
+.radioOption input[type="radio"] {
     display: none;
 }
 
-.selectedAman {
-    background: #e8f5e9;
-    border-color: #4CAF50;
-    color: #2e7d32;
+.radioOption.selectedAman {
+    background-color: #f0fdf4;
+    border-color: #4ade80;
+    color: #16a34a;
 }
 
-.selectedTemuan {
-    background: #ffebee;
-    border-color: #f44336;
-    color: #c62828;
-}
-
-.inputGroup textarea {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-    resize: vertical;
+.radioOption.selectedTemuan {
+    background-color: #fffbeb;
+    border-color: #facc15;
+    color: #b45309;
 }
 
 .submitBtn {
-    background: #2196F3;
+    background-color: #3182ce;
     color: white;
     border: none;
-    padding: 1rem;
-    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 600;
+    border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    margin-top: 1rem;
 }
 
 .submitBtn:disabled {
-    background: #ccc;
+    background-color: #a0aec0;
     cursor: not-allowed;
 }
 
-/* Animations */
-:global(.spin) {
+.spin {
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    100% {
-        transform: rotate(360deg);
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+    .shiftButtons {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .shiftButtons button {
+        width: 100%;
     }
 }

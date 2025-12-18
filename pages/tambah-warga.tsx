@@ -46,11 +46,49 @@ function TambahWarga() {
         setIsSubmitting(true);
         setError('');
 
-        if (!nama || !nik || !tanggalLahir || !pekerjaan) {
-            setError('Nama, NIK, Tanggal Lahir, dan Pekerjaan wajib diisi.');
+        // Comprehensive validation for all fields
+        const requiredFields: { [key: string]: string } = {
+            nama,
+            nik,
+            jenisKelamin,
+            tanggalLahir,
+            pekerjaan,
+            statusPerkawinan,
+            statusHubungan
+        };
+
+        // Admin-specific fields
+        if (!isWarga) {
+            requiredFields.noKK = noKK;
+            requiredFields.email = email;
+            requiredFields.alamatBlok = alamatBlok;
+        }
+
+        const missingFields = Object.entries(requiredFields)
+            .filter(([_, value]) => !value)
+            .map(([key]) => {
+                // Prettify field names for the error message
+                switch (key) {
+                    case 'nama': return 'Nama Lengkap';
+                    case 'nik': return 'NIK';
+                    case 'jenisKelamin': return 'Jenis Kelamin';
+                    case 'tanggalLahir': return 'Tanggal Lahir';
+                    case 'pekerjaan': return 'Pekerjaan';
+                    case 'statusPerkawinan': return 'Status Perkawinan';
+                    case 'statusHubungan': return 'Status Hubungan';
+                    case 'noKK': return 'Nomor Kartu Keluarga';
+                    case 'email': return 'Email Pengguna';
+                    case 'alamatBlok': return 'Alamat Blok';
+                    default: return key;
+                }
+            });
+
+        if (missingFields.length > 0) {
+            setError(`Semua field wajib diisi. Field yang kosong: ${missingFields.join(', ')}.`);
             setIsSubmitting(false);
             return;
         }
+
 
         // Check if NIK is unique
         const nikQuery = query(collection(db, 'warga'), where('nik', '==', nik));
@@ -78,11 +116,6 @@ function TambahWarga() {
                     createdAt: Timestamp.now(),
                 };
             } else { // Admin
-                if (!noKK || !email || !alamatBlok) {
-                    setError('Untuk Admin: No. KK, Email, dan Alamat Blok wajib diisi.');
-                    setIsSubmitting(false);
-                    return;
-                }
                 dataToAdd = {
                     nama, nik, jenisKelamin, pekerjaan, statusPerkawinan,
                     statusHubungan: 'Kepala Keluarga',

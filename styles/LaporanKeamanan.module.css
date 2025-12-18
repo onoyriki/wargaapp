@@ -1,0 +1,44 @@
+
+.container {
+    padding: 2rem;
+    background-color: #f9fafb;
+}
+
+.tabContainer {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 2rem;
+}
+
+.tabButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4b5563;
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    transform: translateY(2px);
+}
+
+.tabButton:hover {
+    background-color: #f3f4f6;
+    color: #1f2937;
+}
+
+.tabButton.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+.contentContainer {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}

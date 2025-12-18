@@ -133,7 +133,6 @@ export default function Home() {
           <div className={styles.formWrapper}>
             <div className={styles.header}>
               <h2>Masuk ke Akun Anda</h2>
-              <p>Silakan masukkan kredensial Anda untuk melanjutkan.</p>
             </div>
             <form className={styles.form} onSubmit={handleLogin}>
 
@@ -171,7 +170,8 @@ export default function Home() {
             </form>
 
             <div className={styles.footer}>
-              <p>Belum punya akun? <Link href="/register">Daftar di sini</Link></p>
+              <p>Belum punya akun? <Link href="/register" legacyBehavior><a>Daftar di sini</a></Link></p>
+              <p><Link href="/lupa-password" legacyBehavior><a>Lupa Password?</a></Link></p>
             </div>
           </div>
         </div>

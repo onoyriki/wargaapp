@@ -8,7 +8,7 @@ import { useAuth } from '../../lib/hooks';
 import { withAuth } from '../../components/withAuth';
 import Layout from '../../components/Layout';
 import { useStaticData } from '../../lib/useStaticData';
-import { FaCamera, FaCheckCircle, FaExclamationTriangle, FaMapMarkerAlt, FaSpinner } from 'react-icons/fa';
+import { FaCamera, FaCheckCircle, FaExclamationTriangle, FaMapMarkerAlt, FaSpinner, FaSun, FaMoon, FaUndo } from 'react-icons/fa';
 import styles from '../../styles/PatroliSatpam.module.css';
 import imageCompression from 'browser-image-compression';
 
@@ -23,31 +23,31 @@ type PatrolLog = {
     checkpointId: string;
     timestamp: Timestamp;
     kondisi: 'Aman' | 'Ada Temuan';
+    shift: 'Pagi' | 'Malam';
 };
 
 const PatroliSatpam = () => {
     const { userData, user } = useAuth();
+    const [shift, setShift] = useState<'Pagi' | 'Malam' | null>(null);
 
-    // 1. Get Active Checkpoints (Static Data with LocalStorage)
     const cpQuery = query(collection(db, 'patrol_checkpoints'), where('aktif', '==', true), orderBy('urutan', 'asc'));
     const { data: checkpoints, loading: loadingCP } = useStaticData<Checkpoint>(cpQuery, {
         key: 'patrol_checkpoints',
         ttl: 24 * 60 * 60 * 1000 // 24 hours
     });
 
-    // 2. Logs (Dynamic Data)
     const [logs, setLogs] = useState<PatrolLog[]>([]);
-    const [loadingLogs, setLoadingLogs] = useState(true);
+    const [loadingLogs, setLoadingLogs] = useState(false);
     const [uploading, setUploading] = useState(false);
 
-    // Modal State
     const [activeCheckpoint, setActiveCheckpoint] = useState<Checkpoint | null>(null);
     const [foto, setFoto] = useState<File | null>(null);
     const [kondisi, setKondisi] = useState<'Aman' | 'Ada Temuan'>('Aman');
     const [catatan, setCatatan] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const fetchLogs = async () => {
+    const fetchLogs = async (currentShift: 'Pagi' | 'Malam') => {
+        if (!currentShift) return;
         setLoadingLogs(true);
         try {
             const today = new Date();
@@ -56,7 +56,8 @@ const PatroliSatpam = () => {
 
             const logQuery = query(
                 collection(db, 'patrol_logs'),
-                where('timestamp', '>=', todayTimestamp)
+                where('timestamp', '>=', todayTimestamp),
+                where('shift', '==', currentShift)
             );
 
             const logSnap = await getDocs(logQuery);
@@ -70,52 +71,49 @@ const PatroliSatpam = () => {
     };
 
     useEffect(() => {
-        fetchLogs();
-    }, []);
+        if (shift) {
+            fetchLogs(shift);
+        }
+    }, [shift]);
 
     const loading = loadingCP || loadingLogs;
 
     const handleCreateLog = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!activeCheckpoint || !foto || !user) return; // Check user instead of userData for ID
+        if (!activeCheckpoint || !foto || !user || !shift) return;
 
         setUploading(true);
         try {
-            // 1. Compress Image
             const options = {
-                maxSizeMB: 0.5, // Max 500KB
+                maxSizeMB: 0.5,
                 maxWidthOrHeight: 1280,
                 useWebWorker: true,
                 fileType: 'image/webp'
             };
             const compressedFile = await imageCompression(foto, options);
-            console.log(`Original: ${foto.size / 1024} KB, Compressed: ${compressedFile.size / 1024} KB`);
 
-            // 2. Upload Photo (WebP)
             const fileName = `patrol/${Date.now()}_${activeCheckpoint.id}.webp`;
             const storageRef = ref(storage, fileName);
             await uploadBytes(storageRef, compressedFile);
             const fotoUrl = await getDownloadURL(storageRef);
 
-            // 3. Create Log Entry
             await addDoc(collection(db, 'patrol_logs'), {
                 checkpointId: activeCheckpoint.id,
                 checkpointName: activeCheckpoint.nama,
-                petugasId: user.uid, // Use user.uid from Firebase Auth
+                petugasId: user.uid,
                 petugasName: userData?.nama || user.email,
                 timestamp: serverTimestamp(),
+                shift: shift, // <-- Menyimpan informasi shift
                 fotoUrl,
                 kondisi,
                 catatan
             });
 
-            // 3. Reset & Refresh
             setActiveCheckpoint(null);
             setFoto(null);
             setCatatan('');
             setKondisi('Aman');
-            setKondisi('Aman');
-            fetchLogs(); // Refresh logs only, checkpoints stay cached
+            fetchLogs(shift);
         } catch (err) {
             console.error(err);
             alert("Gagal mengirim laporan patroli: " + err);
@@ -135,6 +133,20 @@ const PatroliSatpam = () => {
         return logs.some(log => log.checkpointId === cpId);
     };
 
+    const renderShiftSelection = () => (
+        <div className={styles.shiftSelection}>
+            <h2>Pilih Shift Patroli</h2>
+            <div className={styles.shiftButtons}>
+                <button onClick={() => setShift('Pagi')}>
+                    <FaSun /> Mulai Patroli Pagi
+                </button>
+                <button onClick={() => setShift('Malam')}>
+                    <FaMoon /> Mulai Patroli Malam
+                </button>
+            </div>
+        </div>
+    );
+
     return (
         <Layout>
             <Head><title>Patroli - Satpam WargaKoba</title></Head>
@@ -144,33 +156,43 @@ const PatroliSatpam = () => {
                     <p className={styles.subtitle}>{new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
                 </header>
 
-                {loading ? <div className={styles.loading}>Memuat data...</div> : (
-                    <div className={styles.timeline}>
-                        {checkpoints.map((cp, index) => {
-                            const done = isChecked(cp.id);
-                            return (
-                                <div key={cp.id} className={`${styles.card} ${done ? styles.cardDone : ''}`}>
-                                    <div className={styles.cardIcon}>
-                                        {done ? <FaCheckCircle /> : <div className={styles.numberBadge}>{index + 1}</div>}
-                                    </div>
-                                    <div className={styles.cardContent}>
-                                        <h3>{cp.nama}</h3>
-                                        <p>{cp.deskripsi || "Tidak ada deskripsi khusus"}</p>
-                                        {done ? (
-                                            <span className={styles.statusBadge}>Sudah Dicek</span>
-                                        ) : (
-                                            <button onClick={() => openCheckModal(cp)} className={styles.checkButton}>
-                                                <FaMapMarkerAlt /> Check-In
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                {!shift ? renderShiftSelection() : (
+                    <>
+                        <div className={styles.shiftHeader}>
+                            <h3>Shift: {shift}</h3>
+                            <button onClick={() => setShift(null)} className={styles.changeShiftBtn}>
+                                <FaUndo /> Ganti Shift
+                            </button>
+                        </div>
+
+                        {loading ? <div className={styles.loading}>Memuat data...</div> : (
+                            <div className={styles.timeline}>
+                                {checkpoints.map((cp, index) => {
+                                    const done = isChecked(cp.id);
+                                    return (
+                                        <div key={cp.id} className={`${styles.card} ${done ? styles.cardDone : ''}`}>
+                                            <div className={styles.cardIcon}>
+                                                {done ? <FaCheckCircle /> : <div className={styles.numberBadge}>{index + 1}</div>}
+                                            </div>
+                                            <div className={styles.cardContent}>
+                                                <h3>{cp.nama}</h3>
+                                                <p>{cp.deskripsi || "Tidak ada deskripsi khusus"}</p>
+                                                {done ? (
+                                                    <span className={styles.statusBadge}>Sudah Dicek (Shift {shift})</span>
+                                                ) : (
+                                                    <button onClick={() => openCheckModal(cp)} className={styles.checkButton}>
+                                                        <FaMapMarkerAlt /> Check-In
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </>
                 )}
 
-                {/* Modal for Check-In */}
                 {activeCheckpoint && (
                     <div className={styles.modalOverlay}>
                         <div className={styles.modal}>
@@ -180,32 +202,14 @@ const PatroliSatpam = () => {
                             </div>
                             <form onSubmit={handleCreateLog} className={styles.modalForm}>
 
-                                {/* Foto Section */}
                                 <div className={styles.inputGroup}>
                                     <label>Foto Bukti</label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        capture="environment"
-                                        ref={fileInputRef}
-                                        onChange={(e) => setFoto(e.target.files?.[0] || null)}
-                                        hidden
-                                    />
-                                    <div
-                                        className={styles.photoPlaceholder}
-                                        onClick={() => fileInputRef.current?.click()}
-                                        style={{ backgroundImage: foto ? `url(${URL.createObjectURL(foto)})` : 'none' }}
-                                    >
-                                        {!foto && (
-                                            <>
-                                                <FaCamera size={32} />
-                                                <span>Ketuk untuk ambil foto</span>
-                                            </>
-                                        )}
+                                    <input type="file" accept="image/*" capture="environment" ref={fileInputRef} onChange={(e) => setFoto(e.target.files?.[0] || null)} hidden />
+                                    <div className={styles.photoPlaceholder} onClick={() => fileInputRef.current?.click()} style={{ backgroundImage: foto ? `url(${URL.createObjectURL(foto)})` : 'none' }}>
+                                        {!foto && <><FaCamera size={32} /><span>Ketuk untuk ambil foto</span></>}
                                     </div>
                                 </div>
 
-                                {/* Kondisi Section */}
                                 <div className={styles.inputGroup}>
                                     <label>Kondisi</label>
                                     <div className={styles.radioGroup}>
@@ -220,15 +224,9 @@ const PatroliSatpam = () => {
                                     </div>
                                 </div>
 
-                                {/* Catatan Section */}
                                 <div className={styles.inputGroup}>
                                     <label>Catatan (Opsional)</label>
-                                    <textarea
-                                        value={catatan}
-                                        onChange={(e) => setCatatan(e.target.value)}
-                                        rows={3}
-                                        placeholder="Jelaskan situasi jika perlu..."
-                                    />
+                                    <textarea value={catatan} onChange={(e) => setCatatan(e.target.value)} rows={3} placeholder="Jelaskan situasi jika perlu..." />
                                 </div>
 
                                 <button type="submit" className={styles.submitBtn} disabled={!foto || uploading}>
@@ -243,4 +241,4 @@ const PatroliSatpam = () => {
     );
 };
 
-export default withAuth(PatroliSatpam, ['satpam', 'admin']); // Admin juga boleh test
+export default withAuth(PatroliSatpam, ['satpam', 'admin']);

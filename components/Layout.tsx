@@ -10,7 +10,8 @@ import {
     FaTachometerAlt, FaUsers, FaSignOutAlt, FaBars, FaTimes,
     FaUsersCog, FaShieldAlt, FaUserCircle, FaFileInvoiceDollar,
     FaChartLine, FaMoneyBillWave, FaBullhorn, FaAngleLeft, FaAngleRight,
-    FaClipboardCheck, FaMapMarkedAlt, FaServer, FaAd
+    FaClipboardCheck, FaMapMarkedAlt, FaServer, FaAd, FaExchangeAlt, 
+    FaAddressBook, FaBookOpen
 } from 'react-icons/fa';
 
 const navConfig = {
@@ -24,11 +25,14 @@ const navConfig = {
         { href: '/admin/kelola-patroli', label: 'Kelola Titik Patroli', icon: <FaMapMarkedAlt /> },
         { href: '/admin/laporan-keuangan', label: 'Laporan Keuangan', icon: <FaChartLine /> },
         { href: '/laporan-patroli', label: 'Laporan Patroli', icon: <FaShieldAlt /> },
+        { href: '/admin/laporan-keamanan', label: 'Laporan Keamanan', icon: <FaBookOpen /> },
         { href: '/admin/monitoring', label: 'Monitoring DB', icon: <FaServer /> },
     ],
     satpam: [
         { href: '/dashboard', label: 'Dashboard', icon: <FaTachometerAlt /> },
         { href: '/satpam/patroli', label: 'Mulai Patroli', icon: <FaClipboardCheck /> },
+        { href: '/satpam/serah-terima', label: 'Serah Terima Shift', icon: <FaExchangeAlt /> },
+        { href: '/satpam/buku-tamu', label: 'Buku Tamu', icon: <FaAddressBook /> },
         { href: '/laporan-patroli', label: 'Laporan Patroli', icon: <FaShieldAlt /> },
     ],
     warga: [
@@ -66,7 +70,6 @@ const Layout = ({ children, title = 'WargaKoba' }: LayoutProps) => {
     const role = userData?.role;
     const navItems = role ? navConfig[role as keyof typeof navConfig] || [] : [];
 
-    // Capitalize first letter of a string
     const capitalize = (s: string) => s && s.charAt(0).toUpperCase() + s.slice(1);
 
     if (loading) {
@@ -105,7 +108,6 @@ const Layout = ({ children, title = 'WargaKoba' }: LayoutProps) => {
                 </nav>
                 <div className={styles.sidebarFooter}>
                     <div className={`${styles.userInfo} ${isMinimized ? styles.userInfoMinimized : ''}`}>
-                        {/* Updated display format */}
                         <span className={isMinimized ? styles.hidden : ''}>
                             {userData?.nama || user?.email}
                             {userData?.role && ` (${capitalize(userData.role)})`}
