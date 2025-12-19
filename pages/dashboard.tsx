@@ -9,6 +9,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
 import Layout from '../components/Layout';
 import AdminDashboard from '../components/AdminDashboard';
+import FamilyStatsChart from '../components/FamilyStatsChart';
 import styles from '../styles/Dashboard.module.css';
 import wargaStyles from '../styles/WargaDashboard.module.css';
 import { FaUserCheck, FaPlus, FaEdit, FaTrash, FaBullhorn, FaImage, FaTimes } from 'react-icons/fa';
@@ -169,6 +170,11 @@ function WargaDashboard() {
     return (
         <div className={wargaStyles.container}>
             <Head><title>Dashboard Warga - WargaKoba</title></Head>
+
+            {/* Progress Chart */}
+            <div className={wargaStyles.section}>
+                <FamilyStatsChart title="Progres Pendataan Warga Cluster Koba Village" />
+            </div>
 
             {/* Pengumuman Section */}
             <div className={wargaStyles.section}>

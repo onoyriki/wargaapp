@@ -4,11 +4,13 @@ import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import styles from '../styles/Dashboard.module.css';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import FamilyStatsChart from './FamilyStatsChart';
 
 interface Warga {
     id: string;
     tanggalLahir: any;
     jenisKelamin: string;
+    noKK: string;
 }
 
 // Loosened type definitions to be compatible with recharts
@@ -37,6 +39,7 @@ const calculateAge = (timestamp: any): number => {
 };
 
 const COLORS = ['#0088FE', '#FF8042']; // Blue for Male, Orange for Female
+const STATUS_COLORS = ['#22c55e', '#ef4444']; // Green for Lengkap, Red for Belum Lengkap
 
 const AdminDashboard = () => {
     const [totalWarga, setTotalWarga] = useState(0);
@@ -46,6 +49,7 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [pengumuman, setPengumuman] = useState<any[]>([]);
+    const [familyStatusData, setFamilyStatusData] = useState<GenderData[]>([]);
 
     useEffect(() => {
         setLoading(true);
@@ -124,6 +128,7 @@ const AdminDashboard = () => {
                     </ResponsiveContainer>
                     <div className={styles.pieCenterText}><span>Total</span>{totalWarga}</div>
                 </div>
+                <FamilyStatsChart title="Progres Pendataan Warga Cluster Koba Village" />
                 <div className={styles.chartContainer}>
                     <h3>Kelompok Usia</h3>
                     <ResponsiveContainer width="100%" height={300}>
