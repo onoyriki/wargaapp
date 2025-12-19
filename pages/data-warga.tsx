@@ -10,7 +10,7 @@ import { withAuth } from '../components/withAuth';
 import styles from '../styles/DataWarga.module.css';
 // ... imports remain the same, ensure to import necessary icons if missing
 // Added FaCalendarAlt, FaBriefcase, FaVenusMars, FaHandHoldingHeart to existing imports or new ones
-import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus, FaSearch, FaUser, FaIdCard, FaVenusMars, FaBirthdayCake, FaUserFriends, FaBriefcase, FaHandHoldingHeart, FaMapMarkedAlt, FaUsers, FaChevronDown, FaSpinner } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus, FaSearch, FaUser, FaIdCard, FaVenusMars, FaBirthdayCake, FaUserFriends, FaBriefcase, FaHandHoldingHeart, FaMapMarkedAlt, FaUsers, FaChevronDown, FaSpinner, FaPray } from 'react-icons/fa';
 
 type Warga = {
   id: string;
@@ -25,6 +25,7 @@ type Warga = {
   statusKepemilikan?: string;
   pekerjaan: string;
   statusPerkawinan: string;
+  agama: string;
 };
 
 const formatToInputDate = (timestamp: Timestamp) => {
@@ -303,7 +304,7 @@ function DataWarga() {
                                   </span>
                                 </td>
                                 <td>{member.jenisKelamin === 'Laki-laki' ? 'L' : 'P'}</td>
-                                <td>{member.pekerjaan || '-' }</td>
+                                <td>{member.pekerjaan || '-'}</td>
                                 <td>
                                   <div className={styles.buttonGroup}>
                                     {(userData?.role === 'admin' || userData?.role === 'warga') && (
@@ -420,6 +421,20 @@ function DataWarga() {
                         <option>Kawin</option>
                         <option>Cerai Hidup</option>
                         <option>Cerai Mati</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Agama</label>
+                    <div className={styles.inputWrapper}>
+                      <FaPray />
+                      <select value={editData.agama || 'Islam'} onChange={e => setEditData({ ...editData, agama: e.target.value })}>
+                        <option>Islam</option>
+                        <option>Kristen Protestan</option>
+                        <option>Katolik</option>
+                        <option>Hindu</option>
+                        <option>Buddha</option>
+                        <option>Khonghucu</option>
                       </select>
                     </div>
                   </div>

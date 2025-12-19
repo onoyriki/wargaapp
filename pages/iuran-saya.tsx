@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { collection, query, where, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 import { useAuth } from '../lib/hooks';
 import { withAuth } from '../components/withAuth';
 import Layout from '../components/Layout';
 import styles from '../styles/IuranSaya.module.css';
+import { FaSyncAlt, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 
 type Iuran = {
   id: string;
@@ -18,31 +19,39 @@ type Iuran = {
 };
 
 const IuranSaya = () => {
-  const { userData, loading: authLoading } = useAuth();
+  const { user, userData, loading: authLoading } = useAuth();
   const [iuran, setIuran] = useState<Iuran[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
+
 
   useEffect(() => {
     const fetchIuran = async () => {
       if (!userData || !userData.noKK || authLoading) return;
-      
+
       setLoading(true);
       setError(null);
 
       try {
+        console.log('[IuranSaya] Querying iuran for noKK:', userData.noKK);
         const iuranQuery = query(
-          collection(db, 'iuran'), 
-          where('noKK', '==', userData.noKK),
-          orderBy('tahun', 'desc'),
-          orderBy('bulan', 'desc')
+          collection(db, 'iuran'),
+          where('noKK', '==', userData.noKK)
         );
         const iuranSnapshot = await getDocs(iuranQuery);
-        const iuranData = iuranSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Iuran));
+        console.log('[IuranSaya] Snapshot size:', iuranSnapshot.size);
+
+        const iuranData = iuranSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Iuran))
+          .sort((a, b) => {
+            if (b.tahun !== a.tahun) return b.tahun - a.tahun;
+            return b.bulan - a.bulan;
+          });
+
         setIuran(iuranData);
       } catch (e: any) {
-        setError(`Gagal mengambil data iuran: ${e.message}`);
-        console.error(e);
+        setError(e.message);
+        console.error('[IuranSaya] Query Error:', e);
       } finally {
         setLoading(false);
       }
@@ -52,7 +61,7 @@ const IuranSaya = () => {
   }, [userData, authLoading]);
 
   const formatBulanTahun = (bulan: number, tahun: number) => {
-      return `${new Date(0, bulan - 1).toLocaleString('id-ID', { month: 'long' })} ${tahun}`;
+    return `${new Date(0, bulan - 1).toLocaleString('id-ID', { month: 'long' })} ${tahun}`;
   };
 
   const formatDate = (timestamp: { seconds: number; nanoseconds: number; } | undefined) => {
@@ -68,13 +77,17 @@ const IuranSaya = () => {
       <div className={styles.container}>
         <header className={styles.header}>
           <h1>Status Iuran Keluarga</h1>
-          <p>No. KK: {userData?.noKK}</p>
         </header>
 
-        {authLoading || loading && <div className={styles.loading}>Memuat riwayat iuran...</div>}
-        {error && <div className={styles.error}>{error}</div>}
-
-        {!loading && !error && (
+        {authLoading || (loading && !error) ? (
+          <div className={styles.loading}>Memuat riwayat iuran...</div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '2rem', background: '#fff0f0', border: '1px solid #ffcaca', borderRadius: '12px', color: '#c00' }}>
+            <FaExclamationTriangle style={{ fontSize: '2rem' }} />
+            <h3>Akses Ditolak</h3>
+            <p>{error}</p>
+          </div>
+        ) : (
           <div className={styles.tableContainer}>
             <table className={styles.table}>
               <thead>

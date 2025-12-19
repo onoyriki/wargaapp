@@ -11,9 +11,9 @@ import Layout from '../components/Layout';
 import AdminDashboard from '../components/AdminDashboard';
 import styles from '../styles/Dashboard.module.css';
 import wargaStyles from '../styles/WargaDashboard.module.css';
-import { FaUserCheck, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaUserCheck, FaPlus, FaEdit, FaTrash, FaBullhorn, FaImage, FaTimes } from 'react-icons/fa';
 import imageCompression from 'browser-image-compression';
-import { useState, FC, FormEvent } from 'react';
+import { useState, FC, FormEvent, useEffect } from 'react';
 
 // 1. Define strict types
 interface Iklan {
@@ -22,6 +22,15 @@ interface Iklan {
     deskripsi: string;
     creatorEmail: string;
     creatorName: string;
+    images?: string[];
+}
+
+interface Pengumuman {
+    id: string;
+    judul: string;
+    isi: string;
+    penulis: string;
+    createdAt: any;
     images?: string[];
 }
 
@@ -62,22 +71,26 @@ const IklanCard: FC<IklanCardProps> = ({ iklan, onEdit, onDelete }) => {
 
 function WargaDashboard() {
     const { user, userData } = useAuth();
-    const [iklanCollection, loadingIklan] = useCollection(query(collection(db, 'iklan'), orderBy('createdAt', 'desc')));
+    const [iklanCollection, loadingIklan, errorIklan] = useCollection(collection(db, 'iklan'));
+    const [pengumumanCollection, loadingPengumuman, errorPengumuman] = useCollection(collection(db, 'pengumuman'));
+
     const [showForm, setShowForm] = useState(false);
     const [formState, setFormState] = useState<IklanFormState>({ id: null, judul: '', deskripsi: '' });
     const [files, setFiles] = useState<FileList | null>(null);
+    const [selectedPengumuman, setSelectedPengumuman] = useState<Pengumuman | null>(null);
 
     // 3. Apply types to handlers
     const handleFormSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!user || !userData) return;
 
+
         // Cek jika user sudah punya iklan aktif (belum expired)
         if (!formState.id) {
             const now = new Date();
             const activeIklanQuery = query(
                 collection(db, 'iklan'),
-                where('creatorEmail', '==', user.email)
+                where('creatorEmail', '==', user.email?.toLowerCase())
             );
             const activeIklanSnapshot = await getDocs(activeIklanQuery);
             const hasActiveIklan = activeIklanSnapshot.docs.some(doc => {
@@ -120,7 +133,7 @@ function WargaDashboard() {
             await addDoc(collection(db, 'iklan'), {
                 judul: formState.judul,
                 deskripsi: formState.deskripsi,
-                creatorEmail: user.email,
+                creatorEmail: user.email?.toLowerCase(),
                 creatorName: userData.nama || 'Warga',
                 createdAt: new Date(),
                 expiredAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 hari
@@ -143,11 +156,54 @@ function WargaDashboard() {
         }
     };
 
-    const iklanData = iklanCollection?.docs.map(doc => ({ id: doc.id, ...doc.data() } as Iklan)) || [];
+    // Sort client side to bypass potential index issues
+    const iklanData = (iklanCollection?.docs.map(doc => ({ id: doc.id, ...doc.data() } as Iklan)) || [])
+        .sort((a: any, b: any) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    const pengumumanData = (pengumumanCollection?.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pengumuman)) || [])
+        .sort((a: any, b: any) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    console.log('[WargaDashboard] Loading iklan:', loadingIklan, 'count:', iklanData.length, 'error:', errorIklan?.message);
+    console.log('[WargaDashboard] Loading pengumuman:', loadingPengumuman, 'count:', pengumumanData.length, 'error:', errorPengumuman?.message);
 
     return (
         <div className={wargaStyles.container}>
             <Head><title>Dashboard Warga - WargaKoba</title></Head>
+
+            {/* Pengumuman Section */}
+            <div className={wargaStyles.section}>
+                <h3><FaBullhorn /> Pengumuman Terbaru</h3>
+                <div className={wargaStyles.announcementGrid}>
+                    {errorPengumuman && <p className={wargaStyles.errorText}>Error: {errorPengumuman.message}</p>}
+                    {loadingPengumuman ? (
+                        <p>Memuat pengumuman...</p>
+                    ) : pengumumanData.length > 0 ? (
+                        pengumumanData.map(p => (
+                            <div key={p.id} className={wargaStyles.announcementCard} onClick={() => setSelectedPengumuman(p)}>
+                                <div className={wargaStyles.thumbnailWrapper}>
+                                    {p.images && p.images.length > 0 ? (
+                                        <img src={p.images[0]} alt={p.judul} className={wargaStyles.thumbnail} />
+                                    ) : (
+                                        <div className={wargaStyles.placeholderThumbnail}><FaImage /></div>
+                                    )}
+                                </div>
+                                <div className={wargaStyles.content}>
+                                    <h4>{p.judul}</h4>
+                                    <p className={wargaStyles.excerpt}>{p.isi}</p>
+                                    <div className={wargaStyles.meta}>
+                                        <span>{p.penulis}</span>
+                                        <span>{p.createdAt?.toDate().toLocaleDateString('id-ID')}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>Belum ada pengumuman.</p>
+                    )}
+                </div>
+            </div>
+
+            {/* Iklan Section */}
             <div className={wargaStyles.section}>
                 <h3><FaPlus /> Iklan Komunitas</h3>
                 <button className={wargaStyles.primaryButton} onClick={() => { setFormState({ id: null, judul: '', deskripsi: '' }); setShowForm(!showForm); }}>
@@ -168,6 +224,32 @@ function WargaDashboard() {
                     ))}
                 </div>
             </div>
+
+            {/* Modal Detail Pengumuman */}
+            {selectedPengumuman && (
+                <div className={wargaStyles.modalOverlay} onClick={() => setSelectedPengumuman(null)}>
+                    <div className={wargaStyles.modalContent} onClick={e => e.stopPropagation()}>
+                        <button className={wargaStyles.modalClose} onClick={() => setSelectedPengumuman(null)}><FaTimes /></button>
+                        <div className={wargaStyles.modalHeader}>
+                            <span className={wargaStyles.badge}>Pengumuman</span>
+                            <h2>{selectedPengumuman.judul}</h2>
+                        </div>
+                        <div className={wargaStyles.modalBody}>
+                            <p>{selectedPengumuman.isi}</p>
+                            {selectedPengumuman.images && selectedPengumuman.images.length > 0 && (
+                                <div className={wargaStyles.modalImages}>
+                                    {selectedPengumuman.images.map((img, idx) => (
+                                        <img key={idx} src={img} alt={`${selectedPengumuman.judul} ${idx + 1}`} />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <div className={wargaStyles.modalFooter}>
+                            <p>Oleh: {selectedPengumuman.penulis} | {selectedPengumuman.createdAt?.toDate().toLocaleString('id-ID')}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

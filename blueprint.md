@@ -59,8 +59,8 @@ WargaKoba adalah solusi digital terintegrasi yang dirancang untuk memodernisasi 
 
 ### Fitur Warga
 
--   **Dashboard:** Melihat pengumuman penting.
--   **Profil & Keluarga:** Mengelola profil pribadi dan data anggota keluarga.
+-   **Dashboard:** Melihat pengumuman penting dan iklan komunitas dalam satu tampilan terpadu.
+-   **Profil & Keluarga:** Mengelola profil pribadi dan data anggota keluarga. Warga diwajibkan (dipaksa) melengkapi profil (terutama No. KK) sebelum dapat mengakses dashboard.
 -   **Iuran & Keuangan:** Melihat riwayat dan status pembayaran iuran.
 -   **Informasi Lingkungan:** Melihat laporan patroli dan data keluarga.
 

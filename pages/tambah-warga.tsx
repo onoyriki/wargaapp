@@ -9,8 +9,8 @@ import Layout from '../components/Layout';
 import { withAuth } from '../components/withAuth';
 import styles from '../styles/Form.module.css';
 import {
-    FaUser, FaMapMarkedAlt, FaIdCard, FaVenusMars, 
-    FaBirthdayCake, FaUserFriends, FaBriefcase, FaHandHoldingHeart, FaUsers, FaEnvelope
+    FaUser, FaMapMarkedAlt, FaIdCard, FaVenusMars,
+    FaBirthdayCake, FaUserFriends, FaBriefcase, FaHandHoldingHeart, FaUsers, FaEnvelope, FaPray
 } from 'react-icons/fa';
 
 function TambahWarga() {
@@ -32,6 +32,7 @@ function TambahWarga() {
     const [pekerjaan, setPekerjaan] = useState('');
     const [statusPerkawinan, setStatusPerkawinan] = useState('Belum Kawin');
     const [statusHubungan, setStatusHubungan] = useState(isWarga ? 'Anak' : 'Kepala Keluarga');
+    const [agama, setAgama] = useState('Islam');
 
     // Admin-only state
     const [email, setEmail] = useState('');
@@ -54,7 +55,8 @@ function TambahWarga() {
             tanggalLahir,
             pekerjaan,
             statusPerkawinan,
-            statusHubungan
+            statusHubungan,
+            agama
         };
 
         // Admin-specific fields
@@ -76,6 +78,7 @@ function TambahWarga() {
                     case 'pekerjaan': return 'Pekerjaan';
                     case 'statusPerkawinan': return 'Status Perkawinan';
                     case 'statusHubungan': return 'Status Hubungan';
+                    case 'agama': return 'Agama';
                     case 'noKK': return 'Nomor Kartu Keluarga';
                     case 'email': return 'Email Pengguna';
                     case 'alamatBlok': return 'Alamat Blok';
@@ -109,7 +112,7 @@ function TambahWarga() {
                     return;
                 }
                 dataToAdd = {
-                    nama, nik, jenisKelamin, pekerjaan, statusPerkawinan, statusHubungan,
+                    nama, nik, jenisKelamin, pekerjaan, statusPerkawinan, statusHubungan, agama,
                     noKK: userData.noKK,
                     alamatBlok: userData.alamatBlok,
                     email: '', // Anggota keluarga tidak punya login sendiri
@@ -117,13 +120,13 @@ function TambahWarga() {
                 };
             } else { // Admin
                 dataToAdd = {
-                    nama, nik, jenisKelamin, pekerjaan, statusPerkawinan,
+                    nama, nik, jenisKelamin, pekerjaan, statusPerkawinan, agama,
                     statusHubungan: 'Kepala Keluarga',
                     noKK, alamatBlok, email,
                     createdAt: Timestamp.now(),
                 };
             }
-            
+
             dataToAdd.tanggalLahir = Timestamp.fromDate(new Date(tanggalLahir));
 
             await addDoc(collection(db, 'warga'), dataToAdd);
@@ -157,7 +160,7 @@ function TambahWarga() {
                                     <div className={styles.inputGroup}><label htmlFor="noKK">Nomor Kartu Keluarga</label><div className={styles.inputWrapper}><FaUsers className={styles.inputIcon} /><input id="noKK" type="text" value={noKK} onChange={(e) => setNoKK(e.target.value)} required /></div></div>
                                     <div className={styles.inputGroup}><label htmlFor="email">Email Pengguna</label><div className={styles.inputWrapper}><FaEnvelope className={styles.inputIcon} /><input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div></div>
                                     <div className={styles.inputGroup}><label htmlFor="alamatBlok">Alamat Blok (Contoh: A1, B2, T8)</label><div className={styles.inputWrapper}><FaMapMarkedAlt className={styles.inputIcon} /><input id="alamatBlok" type="text" value={alamatBlok} onChange={(e) => setAlamatBlok(e.target.value.toUpperCase())} required /></div></div>
-                                </> 
+                                </>
                             )}
                             <div className={styles.inputGroup}><label htmlFor="nama">Nama Lengkap</label><div className={styles.inputWrapper}><FaUser className={styles.inputIcon} /><input id="nama" type="text" value={nama} onChange={(e) => setNama(e.target.value)} required /></div></div>
                             <div className={styles.inputGroup}><label htmlFor="nik">NIK</label><div className={styles.inputWrapper}><FaIdCard className={styles.inputIcon} /><input id="nik" type="text" value={nik} onChange={(e) => setNik(e.target.value)} required /></div></div>
@@ -166,6 +169,7 @@ function TambahWarga() {
                             <div className={styles.inputGroup}><label htmlFor="statusHubungan">Status Hubungan</label><div className={styles.inputWrapper}><FaUserFriends className={styles.inputIcon} /><select id="statusHubungan" value={statusHubungan} onChange={(e) => setStatusHubungan(e.target.value)} required>{!isWarga && <option>Kepala Keluarga</option>}<option>Istri</option><option>Anak</option><option>Lainnya</option></select></div></div>
                             <div className={styles.inputGroup}><label htmlFor="pekerjaan">Pekerjaan</label><div className={styles.inputWrapper}><FaBriefcase className={styles.inputIcon} /><input id="pekerjaan" type="text" value={pekerjaan} onChange={(e) => setPekerjaan(e.target.value)} required /></div></div>
                             <div className={styles.inputGroup}><label htmlFor="statusPerkawinan">Status Perkawinan</label><div className={styles.inputWrapper}><FaHandHoldingHeart className={styles.inputIcon} /><select id="statusPerkawinan" value={statusPerkawinan} onChange={(e) => setStatusPerkawinan(e.target.value)} required><option>Belum Kawin</option><option>Kawin</option><option>Cerai Hidup</option><option>Cerai Mati</option></select></div></div>
+                            <div className={styles.inputGroup}><label htmlFor="agama">Agama</label><div className={styles.inputWrapper}><FaPray className={styles.inputIcon} /><select id="agama" value={agama} onChange={(e) => setAgama(e.target.value)} required><option>Islam</option><option>Kristen Protestan</option><option>Katolik</option><option>Hindu</option><option>Buddha</option><option>Khonghucu</option></select></div></div>
                         </div>
                         <div className={styles.buttonGroup}>
                             <button type="button" className={styles.cancelButton} onClick={() => router.back()} disabled={isSubmitting}>Batal</button>
