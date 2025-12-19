@@ -21,7 +21,8 @@ interface UserData {
   alamatBlok: string;
   nomorRumah: string;
   createdAt: any;
-  jenisKelamin?: string; // FIX: Added optional jenisKelamin
+  jenisKelamin?: string;
+  agama?: string;
 }
 
 interface AuthContextType {
