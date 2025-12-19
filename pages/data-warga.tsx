@@ -279,45 +279,54 @@ function DataWarga() {
                   {loadingMembers[kk.noKK] ? (
                     <div className={styles.skeletonMember}>Memuat anggota keluarga...</div>
                   ) : (
-                    <div className={styles.membersTableContainer}>
-                      <table className={styles.membersTable}>
-                        <thead>
-                          <tr>
-                            <th>Nama</th>
-                            <th>NIK</th>
-                            <th>Hubungan</th>
-                            <th>L/P</th>
-                            <th>Pekerjaan</th>
-                            <th>Aksi</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {familyMembers[kk.noKK]?.map(member => (
-                            <tr key={member.id}>
-                              <td>{member.nama}</td>
-                              <td>{member.nik}</td>
-                              <td>
-                                <span className={`${styles.badge} ${member.statusHubungan === 'Kepala Keluarga' ? styles.badgeMale : styles.badgeFemale}`}>
-                                  {member.statusHubungan}
-                                </span>
-                              </td>
-                              <td>{member.jenisKelamin === 'Laki-laki' ? 'L' : 'P'}</td>
-                              <td>{member.pekerjaan || '-'}</td>
-                              <td>
-                                <div className={styles.buttonGroup}>
-                                  {(userData?.role === 'admin' || userData?.role === 'warga') && (
-                                    <button onClick={(e) => { e.stopPropagation(); handleEdit(member); }} className={`${styles.actionButton} ${styles.editButton}`}><FaEdit /></button>
-                                  )}
-                                  {(userData?.role === 'admin' || (userData?.role === 'warga' && member.statusHubungan !== 'Kepala Keluarga')) && (
-                                    <button onClick={(e) => { e.stopPropagation(); handleDelete(member.id, member.statusHubungan); }} className={`${styles.actionButton} ${styles.deleteButton}`}><FaTrash /></button>
-                                  )}
-                                </div>
-                              </td>
+                    <>
+                      <div className={styles.membersTableContainer}>
+                        <table className={styles.membersTable}>
+                          <thead>
+                            <tr>
+                              <th>Nama</th>
+                              <th>NIK</th>
+                              <th>Hubungan</th>
+                              <th>L/P</th>
+                              <th>Pekerjaan</th>
+                              <th>Aksi</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          </thead>
+                          <tbody>
+                            {familyMembers[kk.noKK]?.map(member => (
+                              <tr key={member.id}>
+                                <td>{member.nama}</td>
+                                <td>{member.nik}</td>
+                                <td>
+                                  <span className={`${styles.badge} ${member.statusHubungan === 'Kepala Keluarga' ? styles.badgeMale : styles.badgeFemale}`}>
+                                    {member.statusHubungan}
+                                  </span>
+                                </td>
+                                <td>{member.jenisKelamin === 'Laki-laki' ? 'L' : 'P'}</td>
+                                <td>{member.pekerjaan || '-' }</td>
+                                <td>
+                                  <div className={styles.buttonGroup}>
+                                    {(userData?.role === 'admin' || userData?.role === 'warga') && (
+                                      <button onClick={(e) => { e.stopPropagation(); handleEdit(member); }} className={`${styles.actionButton} ${styles.editButton}`}><FaEdit /></button>
+                                    )}
+                                    {(userData?.role === 'admin' || (userData?.role === 'warga' && member.statusHubungan !== 'Kepala Keluarga')) && (
+                                      <button onClick={(e) => { e.stopPropagation(); handleDelete(member.id, member.statusHubungan); }} className={`${styles.actionButton} ${styles.deleteButton}`}><FaTrash /></button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      {isWarga && (
+                        <div className={styles.addMemberContainer}>
+                          <button className={styles.addButton} onClick={() => router.push('/tambah-warga')}>
+                            <FaPlus /> Tambah Anggota Keluarga
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}

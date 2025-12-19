@@ -538,3 +538,10 @@
     background-color: #fff5f7;
     color: #d53f8c;
 }
+
+.addMemberContainer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #edf2f7;
+    display: flex;
+    justify-content: flex-end;
+}
