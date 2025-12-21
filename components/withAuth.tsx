@@ -2,6 +2,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../lib/hooks';
+import { auth } from '../lib/firebase';
 import { ComponentType, useEffect } from 'react';
 
 // Overload the function signature
@@ -14,15 +15,11 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>, a
     const router = useRouter();
     const isBrowser = typeof window !== 'undefined';
 
-    console.log('[withAuth] Render - loading:', loading, 'path:', router.pathname, 'user:', !!user, 'userData:', !!userData);
-
     useEffect(() => {
       // We only run the redirection logic on the client
       if (loading || !isBrowser) {
-        console.log('[withAuth] useEffect - waiting (loading or !browser)');
         return;
       }
-      console.log('[withAuth] useEffect - checking access');
 
       const isAuthPage = router.pathname === '/' || router.pathname === '/register';
       const isVerificationPage = router.pathname === '/menunggu-verifikasi';
@@ -77,12 +74,28 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>, a
       return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Redirecting to login...</div>;
     }
 
-    // If user is logged in, but data is not yet available (or failed)
+    // If user is logged in, but data is still missing after loading finishes
+    if (!userData && !loading) {
+      console.warn('[withAuth] User is authenticated but userData is missing from Firestore.');
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', gap: 20, textAlign: 'center', padding: 20 }}>
+          <div style={{ color: '#ef4444', fontWeight: 'bold' }}>Profil Pengguna Tidak Ditemukan</div>
+          <p style={{ maxWidth: 400 }}>Akun Anda terautentikasi, namun data profil di database tidak ditemukan atau belum dibuat.</p>
+          <button
+            onClick={() => auth.signOut().then(() => router.push('/'))}
+            style={{ padding: '10px 20px', backgroundColor: '#333', color: '#fff', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+          >
+            Kembali ke Login / Keluar
+          </button>
+        </div>
+      );
+    }
+
+    // Still loading
     if (!userData) {
-      // This can happen if the user document in Firestore is missing.
-      // The useEffect will handle redirection if needed (e.g., to /profil)
       return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', gap: 12 }}>
+          <div className="spinner"></div>
           <div>Loading user data...</div>
         </div>
       );

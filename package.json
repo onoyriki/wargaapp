@@ -11,10 +11,12 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
     "@types/recharts": "^1.8.29",
     "browser-image-compression": "^2.0.2",
     "chart.js": "^4.5.1",
     "firebase": "^12.6.0",
+    "firebase-admin": "^13.6.0",
     "next": "^16.0.10",
     "next-pwa": "^5.6.0",
     "react": "19.2.1",

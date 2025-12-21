@@ -1,73 +1,92 @@
-# Blueprint Aplikasi WargaKoba
+# Blueprint Aplikasi Cluster Koba Village Purwakarta
 
-Dokumen ini menguraikan arsitektur, fitur, dan rencana pengembangan untuk aplikasi WargaKoba.
+Dokumen ini menguraikan arsitektur, fitur, dan rencana pengembangan untuk aplikasi manajemen warga perumahan Cluster Koba Village Purwakarta.
 
 ## Ringkasan
 
-WargaKoba adalah solusi digital terintegrasi yang dirancang untuk memodernisasi dan menyederhanakan manajemen data warga di lingkungan perumahan. Aplikasi ini menyediakan platform terpusat untuk administrator, satpam, dan warga untuk berinteraksi dengan data komunitas, meningkatkan efisiensi, keamanan, dan komunikasi.
+Cluster Koba Village Purwakarta (sebelumnya WargaKoba) adalah solusi digital terintegrasi yang dirancang untuk memodernisasi dan menyederhanakan manajemen data warga di lingkungan perumahan. Aplikasi ini menyediakan platform terpusat untuk administrator, satpam, dan warga untuk berinteraksi dengan data komunitas, meningkatkan efisiensi, keamanan, dan komunikasi.
 
-## Rencana Pengembangan Terakhir: Penggabungan Menu Laporan Keamanan
+## Pengembangan Terakhir & Milestone Penting
 
-**Tujuan:** Merampingkan antarmuka admin dengan mengkonsolidasikan laporan-laporan terkait keamanan ke dalam satu halaman terpusat untuk meningkatkan efisiensi dan kemudahan navigasi.
+**Tujuan:** Meningkatkan integritas data, keamanan akses, dan pengalaman pengguna melalui personalisasi dan otomasi manajemen akun.
 
-**Perubahan Desain Final:**
+**Pembaruan Utama:**
 
-1.  **Membuat Halaman Laporan Terpusat:**
-    *   Membuat satu halaman utama baru di `pages/admin/laporan-keamanan.tsx` yang berfungsi sebagai hub untuk semua laporan keamanan.
-    *   Mengimplementasikan sistem navigasi berbasis *tab* di halaman tersebut, memungkinkan admin untuk beralih antara "Laporan Serah Terima" dan "Laporan Buku Tamu" tanpa berpindah halaman.
+1.  **Rebranding & UI Rejuvenation:**
+    *   Perubahan nama aplikasi menjadi **Cluster Koba Village Purwakarta**.
+    *   Redesain Landing Page dengan tata letak split 70/30 (Visual Content / Login Form) yang modern.
+    *   Implementasi grid pengumuman dan iklan yang dinamis dengan gambar di halaman depan.
+    *   Optimalisasi UI verifikasi admin dan monitor dashboard.
 
-2.  **Refaktorisasi Menjadi Komponen:**
-    *   Mengubah halaman `laporan-serah-terima.tsx` dan `laporan-buku-tamu.tsx` menjadi komponen React yang dapat digunakan kembali (`components/LaporanSerahTerima.tsx` dan `components/LaporanBukuTamu.tsx`).
-    *   Komponen-komponen ini kemudian diimpor dan ditampilkan secara dinamis di dalam *tab* pada halaman laporan terpusat.
+2.  **Manajemen Pengguna & Keamanan:**
+    *   Penyederhanaan metode masuk dengan menghapus Google Sign-In (fokus pada Email/Password).
+    *   Implementasi sistem verifikasi admin yang komprehensif (User Management, Role Management).
+    *   Penghapusan otomatis akun Firebase Auth saat data pengguna dihapus dari sistem.
+    *   Sinkronisasi data `noKK` dan `alamatBlok` ke koleksi `users` untuk penguatan Security Rules Firestore.
 
-3.  **Pembaruan Navigasi Utama:**
-    *   Memodifikasi `components/Layout.tsx` untuk menghapus dua tautan menu laporan yang lama dari sidebar admin.
-    *   Menggantinya dengan satu tautan tunggal, **"Laporan Keamanan"**, yang mengarah ke halaman terpusat yang baru.
+3.  **Fitur Keluarga & Profil:**
+    *   Penambahan fitur "Tambah Anggota Keluarga" bagi warga untuk kelola mandiri.
+    *   Validasi NIK unik secara sistem untuk mencegah duplikasi data.
+    *   Personalitas data dengan penambahan field `agama` dan `jenisKelamin`.
+    *   Sistem redirect paksa: Warga yang belum melengkapi profil (terutama No. KK) akan diarahkan langsung ke halaman profil sebelum bisa mengakses dashboard.
 
-4.  **Pembersihan Kode:** Menghapus file halaman `pages/admin/laporan-serah-terima.tsx` dan `pages/admin/laporan-buku-tamu.tsx` yang sudah tidak relevan untuk menjaga kebersihan struktur proyek.
-
-**Hasil:** Antarmuka admin kini lebih rapi dan intuitif. Mengakses berbagai jenis laporan keamanan menjadi lebih cepat dan efisien, mengurangi jumlah klik dan menyederhanakan alur kerja admin.
+4.  **Optimalisasi Media:**
+    *   Implementasi kompresi gambar otomatis ke format WebP untuk efisiensi penyimpanan dan kecepatan akses.
 
 ## Arsitektur
 
 *   **Framework:** Next.js dengan Pages Router
 *   **PWA:** Diimplementasikan menggunakan `next-pwa`
-*   **Authentication:** Firebase Authentication (Email/Password dan Google Sign-In)
-*   **Database:** Firestore
-*   **Storage:** Firebase Storage untuk file upload (e.g., foto KTP)
-*   **Styling:** CSS Modules dan Global Styles
+*   **Authentication:** Firebase Authentication (Email/Password)
+*   **Database:** Firestore dengan Security Rules berbasis Role dan KK.
+*   **Storage:** Firebase Storage (dengan optimasi format WebP).
+*   **Styling:** CSS Modules dan Global Styles berbasis Vanilla CSS.
+
+## Skema Database & Keamanan
+
+Struktur database saat ini dirancang untuk memastikan integritas data dan fungsionalitas aplikasi yang aman.
+
+### Koleksi Firestore
+
+| Koleksi | Deskripsi | Field Utama |
+| :--- | :--- | :--- |
+| `users` | Data otentikasi & keamanan | `email`, `role`, `verified`, `noKK`, `alamatBlok` |
+| `warga` | Profil detail warga & keluarga | `nama`, `nik`, `noKK`, `email`, `statusHubungan`, `alamatBlok`, `agama`, `jenisKelamin`, `tanggalLahir` |
+| `iuran` | Catatan pembayaran iuran | `noKK`, `bulan`, `tahun`, `jumlah`, `status`, `tanggalBayar` |
+| `patrol_checkpoints` | Daftar titik patroli | `nama`, `urutan`, `aktif` |
+| `patrol_logs` | Catatan aktivitas patroli | `checkpointId`, `status`, `waktu`, `petugas`, `keterangan` |
+| `buku_tamu` | Data pengunjung | `nama`, `tujuan`, `keperluan`, `fotoKtpUrl`, `waktuMasuk`, `waktuKeluar` |
+| `serah_terima` | Log serah terima shift | `penerima`, `menyerahkan`, `kondisi`, `kejadian`, `createdAt` |
+| `pengumuman` | Konten pengumuman | `judul`, `isi`, `penulis`, `images`, `createdAt` |
+| `iklan` | Konten iklan komunitas | `judul`, `isi`, `penulis`, `images`, `createdAt` |
+
+### Integritas & Keamanan
+
+1.  **Role-Based Access Control (RBAC):**
+    *   **Admin:** Akses penuh (CRUD) melalui modul verifikasi dan manajemen pengguna khusus.
+    *   **Satpam:** Akses operasional keamanan (`patrol_logs`, `buku_tamu`, `serah_terima`).
+    *   **Warga:** Akses baca iuran sendiri, kelola keluarga sendiri (berdasarkan kesamaan `noKK`), serta akses pengumuman/iklan.
+2.  **Validasi KK Mandatori:** Data `noKK` menjadi kunci utama (foreign key de facto) untuk mengaitkan data iuran, keluarga, dan izin akses.
 
 ## Fitur yang Telah Diimplementasikan
 
 ### Fitur Umum
-
--   **Progressive Web App (PWA):** Dapat diinstal dan diakses secara offline.
--   **Otentikasi & Peran:** Login/Registrasi aman dengan peran (`admin`, `satpam`, `warga`).
--   **Reset Kata Sandi & Login Google:** Opsi pemulihan akun dan login alternatif.
--   **Deployment CI/CD:** Alur kerja deployment otomatis.
+-   **Landing Page Modern:** Tampilan visual 70% konten dan 30% login yang responsif.
+-   **PWA:** Dapat diinstal di HP/Desktop dan diakses cepat.
+-   **Otentikasi Aman:** Sistem Email/Password dengan fitur Lupa Password.
 
 ### Fitur Admin
-
--   **Dashboard:** Ringkasan dan statistik.
--   **Manajemen Warga:** CRUD untuk data warga.
--   **Verifikasi & Integritas Data:** Antarmuka terpusat (dalam B. Indonesia) untuk persetujuan pengguna dan validasi kelengkapan data.
--   **Manajemen Keuangan:** Kelola iuran dan lihat laporan keuangan.
--   **Manajemen Konten:** Kelola pengumuman dan iklan.
--   **Manajemen Patroli:** Kelola titik patroli.
--   **Laporan Keamanan Terpusat:** Antarmuka tunggal dengan sistem tab untuk meninjau "Laporan Serah Terima Shift" dan "Laporan Buku Tamu", lengkap dengan fungsi filter dan pencarian.
--   **Monitoring:** Memantau aktivitas sistem.
+-   **Verifikasi Terpusat:** Manajemen registrasi warga baru dan pengaturan peran.
+-   **Manajemen Warga & KK:** CRUD data warga dan monitoring kelengkapan data keluarga.
+-   **Laporan Keamanan Terpusat:** Sistem tab untuk Serah Terima dan Buku Tamu.
+-   **Manajemen Keuangan:** Kelola iuran dan monitoring tunggakan warga.
+-   **Manajemen Konten:** Dashboard untuk posting pengumuman dan iklan dengan dukungan upload banyak gambar & kompresi WebP.
 
 ### Fitur Warga
-
--   **Dashboard:** Melihat pengumuman penting dan iklan komunitas dalam satu tampilan terpadu.
--   **Profil & Keluarga:** Mengelola profil pribadi dan data anggota keluarga. Warga diwajibkan (dipaksa) melengkapi profil (terutama No. KK) sebelum dapat mengakses dashboard.
--   **Iuran & Keuangan:** Melihat riwayat dan status pembayaran iuran.
--   **Informasi Lingkungan:** Melihat laporan patroli dan data keluarga.
+-   **Dashboard Terpadu:** Melihat info iuran terbaru, pengumuman, dan iklan dalam satu layar.
+-   **Kelola Keluarga:** Menambah/mengedit data anggota keluarga yang terdaftar dalam satu KK.
+-   **Profil Mandiri:** Mewajibkan kelengkapan data sebelum akses fitur lainnya.
 
 ### Fitur Satpam
+-   **Operasional Digital:** Log patroli, buku tamu digital (foto KTP), dan serah terima shift yang terdokumentasi rapi.
 
--   **Dashboard:** Akses cepat ke fungsi utama.
--   **Patroli:** Memulai patroli berbasis shift dan mengirimkan laporan checklist.
--   **Serah Terima Shift:** Mengisi formulir serah terima di akhir shift untuk mendokumentasikan kondisi dan kejadian.
--   **Buku Tamu:** Mencatat data tamu yang masuk, termasuk upload foto KTP untuk verifikasi.
--   **Laporan:** Mengakses kembali laporan patroli yang telah dikirim.

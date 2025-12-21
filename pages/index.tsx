@@ -37,9 +37,27 @@ export default function Home() {
     }
   }, [user, router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (error) {
+      console.error('[Home] sign-in hook error state:', error);
+    }
+  }, [error]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    signInWithEmailAndPassword(email, password);
+    const cleanEmail = email.trim();
+
+    try {
+      const res = await signInWithEmailAndPassword(cleanEmail, password);
+      if (res) {
+      } else {
+        console.warn('[Login] sign-in hook returned null, check hook error state.');
+      }
+    } catch (err: any) {
+      console.error('[Login] Exception caught:', err.code, err.message);
+      // If code is missing, log the whole object
+      if (!err.code) console.error('[Login] Full error object:', err);
+    }
   };
 
 
@@ -93,8 +111,6 @@ export default function Home() {
                 })}
                 {iklanCollection?.docs.map(doc => {
                   const data = doc.data();
-                  console.log('Iklan data:', doc.id, data);
-                  console.log('Iklan images:', data.images);
                   return (
                     <div
                       key={doc.id}
