@@ -31,9 +31,15 @@ const PatroliSatpam = () => {
     const [shift, setShift] = useState<'Pagi' | 'Malam' | null>(null);
 
     const cpQuery = query(collection(db, 'patrol_checkpoints'), where('aktif', '==', true), orderBy('urutan', 'asc'));
-    const { data: checkpoints, loading: loadingCP } = useStaticData<Checkpoint>(cpQuery, {
-        key: 'patrol_checkpoints',
-        ttl: 24 * 60 * 60 * 1000 // 24 hours
+    const { data: rawCheckpoints, loading: loadingCP } = useStaticData<Checkpoint>(cpQuery, {
+        key: 'patrol_checkpoints_v2', // Changed key to force refresh
+        ttl: 10 * 60 * 1000 // 10 minutes
+    });
+
+    // Multi-level sorting for checkpoints (Primary by 'urutan', Secondary by natural name)
+    const checkpoints = [...(rawCheckpoints || [])].sort((a, b) => {
+        if (a.urutan !== b.urutan) return a.urutan - b.urutan;
+        return a.nama.localeCompare(b.nama, undefined, { numeric: true, sensitivity: 'base' });
     });
 
     const [logs, setLogs] = useState<PatrolLog[]>([]);

@@ -23,6 +23,7 @@ Cluster Koba Village Purwakarta (sebelumnya WargaKoba) adalah solusi digital ter
     *   Implementasi sistem verifikasi admin yang komprehensif (User Management, Role Management).
     *   Penghapusan otomatis akun Firebase Auth saat data pengguna dihapus dari sistem.
     *   Sinkronisasi data `noKK` dan `alamatBlok` ke koleksi `users` untuk penguatan Security Rules Firestore.
+    *   Implementasi halaman `/laporan-keamanan` yang dapat diakses oleh Admin dan Satpam (Laporan Serah Terima & Buku Tamu).
 
 3.  **Fitur Keluarga & Profil:**
     *   Penambahan fitur "Tambah Anggota Keluarga" bagi warga untuk kelola mandiri.
@@ -80,7 +81,9 @@ Struktur database saat ini dirancang untuk memastikan integritas data dan fungsi
 -   **Manajemen Warga & KK:** CRUD data warga dan monitoring kelengkapan data keluarga.
 -   **Laporan Keamanan Terpusat:** Sistem tab untuk Serah Terima dan Buku Tamu.
 -   **Manajemen Keuangan:** Kelola iuran dan monitoring tunggakan warga.
+-   **Manajemen Titik Patroli:** CRUD data titik patroli dengan pengaturan urutan (sequence) custom untuk satpam.
 -   **Manajemen Konten:** Dashboard untuk posting pengumuman dan iklan dengan dukungan upload banyak gambar & kompresi WebP.
+-   **Pemeliharaan Database:** Halaman maintenance untuk backup data ke JSON dan pembersihan otomatis log lama (Firestore & Storage).
 
 ### Fitur Warga
 -   **Dashboard Terpadu:** Melihat info iuran terbaru, pengumuman, dan iklan dalam satu layar.

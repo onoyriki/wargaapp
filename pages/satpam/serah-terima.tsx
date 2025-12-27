@@ -13,7 +13,7 @@ import { FaSave, FaExchangeAlt } from 'react-icons/fa';
 function SerahTerimaPage() {
   const { user, userData } = useAuth(); // Destructure user object
   const router = useRouter();
-  
+
   const [shift, setShift] = useState('Pagi');
   const [kondisi, setKondisi] = useState('Aman Terkendali');
   const [kejadian, setKejadian] = useState('');
@@ -69,18 +69,17 @@ function SerahTerimaPage() {
       </Head>
       <div className={styles.formContainer}>
         <form onSubmit={handleSubmit} className={styles.formBox}>
-          <h1><FaExchangeAlt style={{ marginRight: '10px' }}/>Formulir Serah Terima Shift</h1>
+          <h1><FaExchangeAlt style={{ marginRight: '10px' }} />Formulir Serah Terima Shift</h1>
           <p>Lengkapi formulir di bawah untuk mendokumentasikan serah terima shift Anda.</p>
-          
+
           {error && <p className={styles.errorMessage}>{error}</p>}
           {success && <p className={styles.successMessage}>{success}</p>}
 
           <div className={styles.inputGroup}>
             <label htmlFor="shift">Shift</label>
             <select id="shift" value={shift} onChange={(e) => setShift(e.target.value)} required>
-              <option value="Pagi">Pagi (07:00 - 15:00)</option>
-              <option value="Siang">Siang (15:00 - 23:00)</option>
-              <option value="Malam">Malam (23:00 - 07:00)</option>
+              <option value="Pagi">Pagi (08:00 - 20:00)</option>
+              <option value="Malam">Malam (20:00 - 08:00)</option>
             </select>
           </div>
 
@@ -95,10 +94,10 @@ function SerahTerimaPage() {
 
           <div className={styles.inputGroup}>
             <label htmlFor="kejadian">Laporan Kejadian Khusus (jika ada)</label>
-            <textarea 
-              id="kejadian" 
-              rows={4} 
-              value={kejadian} 
+            <textarea
+              id="kejadian"
+              rows={4}
+              value={kejadian}
               onChange={(e) => setKejadian(e.target.value)}
               placeholder="Contoh: Ditemukan gerbang blok B tidak terkunci pada pukul 02:30."
             />
@@ -106,10 +105,10 @@ function SerahTerimaPage() {
 
           <div className={styles.inputGroup}>
             <label htmlFor="inventaris">Pemeriksaan & Serah Terima Inventaris</label>
-            <textarea 
-              id="inventaris" 
-              rows={3} 
-              value={inventaris} 
+            <textarea
+              id="inventaris"
+              rows={3}
+              value={inventaris}
               onChange={(e) => setInventaris(e.target.value)}
               placeholder="Contoh: HT, senter, dan kunci gerbang lengkap."
             />

@@ -21,13 +21,14 @@ const KelolaPatroli = () => {
   const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Form State
   const [nama, setNama] = useState('');
   const [deskripsi, setDeskripsi] = useState('');
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editNama, setEditNama] = useState('');
   const [editDeskripsi, setEditDeskripsi] = useState('');
+  const [editUrutan, setEditUrutan] = useState<number>(0);
 
   const fetchCheckpoints = async () => {
     setLoading(true);
@@ -35,6 +36,13 @@ const KelolaPatroli = () => {
       const q = query(collection(db, 'patrol_checkpoints'), orderBy('urutan', 'asc'));
       const snapshot = await getDocs(q);
       const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Checkpoint));
+
+      // Multi-level sorting: Primary by 'urutan', Secondary by natural name
+      data.sort((a, b) => {
+        if (a.urutan !== b.urutan) return a.urutan - b.urutan;
+        return a.nama.localeCompare(b.nama, undefined, { numeric: true, sensitivity: 'base' });
+      });
+
       setCheckpoints(data);
     } catch (err: any) {
       console.error(err);
@@ -53,8 +61,8 @@ const KelolaPatroli = () => {
     if (!nama) return;
 
     try {
-      const newOrder = checkpoints.length > 0 ? Math.max(...checkpoints.map(c => c.urutan)) + 1 : 1;
-      
+      const newOrder = checkpoints.length > 0 ? Math.max(...checkpoints.map(c => c.urutan || 0)) + 1 : 1;
+
       await addDoc(collection(db, 'patrol_checkpoints'), {
         nama,
         deskripsi,
@@ -87,12 +95,14 @@ const KelolaPatroli = () => {
     setIsEditing(cp.id);
     setEditNama(cp.nama);
     setEditDeskripsi(cp.deskripsi);
+    setEditUrutan(cp.urutan);
   };
 
   const cancelEdit = () => {
     setIsEditing(null);
     setEditNama('');
     setEditDeskripsi('');
+    setEditUrutan(0);
   };
 
   const saveEdit = async (id: string) => {
@@ -100,7 +110,8 @@ const KelolaPatroli = () => {
       const docRef = doc(db, 'patrol_checkpoints', id);
       await updateDoc(docRef, {
         nama: editNama,
-        deskripsi: editDeskripsi
+        deskripsi: editDeskripsi,
+        urutan: Number(editUrutan)
       });
       setIsEditing(null);
       fetchCheckpoints();
@@ -134,90 +145,99 @@ const KelolaPatroli = () => {
 
         {/* Add Checkpoint Form */}
         <div className={styles.card}>
-            <h3>Tambah Titik Baru</h3>
-            <form onSubmit={handleAddCheckpoint} className={styles.form}>
-                <div className={styles.formGroup}>
-                    <label>Nama Lokasi</label>
-                    <input 
-                        type="text" 
-                        value={nama} 
-                        onChange={(e) => setNama(e.target.value)} 
-                        placeholder="Contoh: Gerbang Depan"
-                        required 
-                    />
-                </div>
-                <div className={styles.formGroup}>
-                    <label>Deskripsi (Opsional)</label>
-                    <input 
-                        type="text" 
-                        value={deskripsi} 
-                        onChange={(e) => setDeskripsi(e.target.value)} 
-                        placeholder="Keterangan tambahan..."
-                    />
-                </div>
-                <button type="submit" className={styles.addButton}>
-                    <FaPlus /> Tambah
-                </button>
-            </form>
+          <h3>Tambah Titik Baru</h3>
+          <form onSubmit={handleAddCheckpoint} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label>Nama Lokasi</label>
+              <input
+                type="text"
+                value={nama}
+                onChange={(e) => setNama(e.target.value)}
+                placeholder="Contoh: Gerbang Depan"
+                required
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Deskripsi (Opsional)</label>
+              <input
+                type="text"
+                value={deskripsi}
+                onChange={(e) => setDeskripsi(e.target.value)}
+                placeholder="Keterangan tambahan..."
+              />
+            </div>
+            <button type="submit" className={styles.addButton}>
+              <FaPlus /> Tambah
+            </button>
+          </form>
         </div>
 
         {/* List of Checkpoints */}
         <div style={{ marginTop: '2rem' }}>
-            {loading ? <p>Memuat...</p> : (
-                <div className={styles.listContainer}>
-                    {checkpoints.length === 0 ? <p>Belum ada titik patroli.</p> : (
-                        <table className={styles.table}>
-                            <thead>
-                                <tr>
-                                    <th>Urutan</th>
-                                    <th>Nama Lokasi</th>
-                                    <th>Deskripsi</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {checkpoints.map((cp) => (
-                                    <tr key={cp.id}>
-                                        <td>{cp.urutan}</td>
-                                        <td>
-                                            {isEditing === cp.id ? (
-                                                <input value={editNama} onChange={e => setEditNama(e.target.value)} />
-                                            ) : cp.nama}
-                                        </td>
-                                        <td>
-                                            {isEditing === cp.id ? (
-                                                <input value={editDeskripsi} onChange={e => setEditDeskripsi(e.target.value)} />
-                                            ) : cp.deskripsi}
-                                        </td>
-                                        <td>
-                                            <button 
-                                                onClick={() => toggleStatus(cp)}
-                                                className={cp.aktif ? styles.statusActive : styles.statusInactive}
-                                            >
-                                                {cp.aktif ? 'Aktif' : 'Non-Aktif'}
-                                            </button>
-                                        </td>
-                                        <td>
-                                            {isEditing === cp.id ? (
-                                                <div className={styles.actionGroup}>
-                                                    <button onClick={() => saveEdit(cp.id)} className={styles.saveBtn}><FaSave /></button>
-                                                    <button onClick={cancelEdit} className={styles.cancelBtn}><FaTimes /></button>
-                                                </div>
-                                            ) : (
-                                                <div className={styles.actionGroup}>
-                                                    <button onClick={() => startEdit(cp)} className={styles.editBtn}><FaEdit /></button>
-                                                    <button onClick={() => handleDelete(cp.id)} className={styles.deleteBtn}><FaTrash /></button>
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
-            )}
+          {loading ? <p>Memuat...</p> : (
+            <div className={styles.listContainer}>
+              {checkpoints.length === 0 ? <p>Belum ada titik patroli.</p> : (
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Urutan</th>
+                      <th>Nama Lokasi</th>
+                      <th>Deskripsi</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {checkpoints.map((cp) => (
+                      <tr key={cp.id}>
+                        <td>
+                          {isEditing === cp.id ? (
+                            <input
+                              type="number"
+                              value={editUrutan}
+                              onChange={e => setEditUrutan(Number(e.target.value))}
+                              style={{ width: '60px' }}
+                            />
+                          ) : cp.urutan}
+                        </td>
+                        <td>
+                          {isEditing === cp.id ? (
+                            <input value={editNama} onChange={e => setEditNama(e.target.value)} />
+                          ) : cp.nama}
+                        </td>
+                        <td>
+                          {isEditing === cp.id ? (
+                            <input value={editDeskripsi} onChange={e => setEditDeskripsi(e.target.value)} />
+                          ) : cp.deskripsi}
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => toggleStatus(cp)}
+                            className={cp.aktif ? styles.statusActive : styles.statusInactive}
+                          >
+                            {cp.aktif ? 'Aktif' : 'Non-Aktif'}
+                          </button>
+                        </td>
+                        <td>
+                          {isEditing === cp.id ? (
+                            <div className={styles.actionGroup}>
+                              <button onClick={() => saveEdit(cp.id)} className={styles.saveBtn}><FaSave /></button>
+                              <button onClick={cancelEdit} className={styles.cancelBtn}><FaTimes /></button>
+                            </div>
+                          ) : (
+                            <div className={styles.actionGroup}>
+                              <button onClick={() => startEdit(cp)} className={styles.editBtn}><FaEdit /></button>
+                              <button onClick={() => handleDelete(cp.id)} className={styles.deleteBtn}><FaTrash /></button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Layout>

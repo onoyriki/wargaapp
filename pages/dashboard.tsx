@@ -12,7 +12,7 @@ import AdminDashboard from '../components/AdminDashboard';
 import FamilyStatsChart from '../components/FamilyStatsChart';
 import styles from '../styles/Dashboard.module.css';
 import wargaStyles from '../styles/WargaDashboard.module.css';
-import { FaUserCheck, FaPlus, FaEdit, FaTrash, FaBullhorn, FaImage, FaTimes } from 'react-icons/fa';
+import { FaUserCheck, FaPlus, FaEdit, FaTrash, FaBullhorn, FaImage, FaTimes, FaBookOpen } from 'react-icons/fa';
 import imageCompression from 'browser-image-compression';
 import { useState, FC, FormEvent, useEffect } from 'react';
 
@@ -304,6 +304,11 @@ function Dashboard() {
                         <FaUserCheck className={styles.actionCardIcon} />
                         <h3>Laporan Patroli</h3>
                         <p>Lihat dan kelola laporan patroli keamanan untuk menjaga lingkungan.</p>
+                    </Link>
+                    <Link href="/laporan-keamanan" className={styles.actionCard}>
+                        <FaBookOpen className={styles.actionCardIcon} />
+                        <h3>Laporan Keamanan</h3>
+                        <p>Pantau laporan serah terima shift dan buku tamu digital.</p>
                     </Link>
                 </div>
             </div>

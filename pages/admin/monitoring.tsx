@@ -36,9 +36,11 @@ const MonitoringDashboard = () => {
         lastUpdated: new Date()
     });
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchData = async () => {
         setLoading(true);
+        setError(null);
         try {
             // Efficient Aggregation Queries (Cost-Effective)
             const wargaSnap = await getCountFromServer(collection(db, 'users'));
@@ -53,8 +55,13 @@ const MonitoringDashboard = () => {
                 iklan: iklanSnap.data().count,
                 lastUpdated: new Date()
             });
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error fetching stats:", error);
+            if (error.code === 'permission-denied') {
+                setError("Akses ditolak. Pastikan Anda memiliki peran Admin dan aturan keamanan telah diterapkan.");
+            } else {
+                setError("Gagal memuat data statistik sistem.");
+            }
         } finally {
             setLoading(false);
         }
@@ -120,6 +127,12 @@ const MonitoringDashboard = () => {
                         <FaSync style={{ marginRight: '8px' }} /> Refresh Data
                     </button>
                 </div>
+
+                {error && (
+                    <div style={{ backgroundColor: '#fff5f5', color: '#c53030', padding: '1rem', borderRadius: '8px', marginBottom: '2rem', border: '1px solid #feb2b2' }}>
+                        <strong>⚠️ Error:</strong> {error}
+                    </div>
+                )}
 
                 <div className={styles.grid}>
                     <div className={styles.card}>

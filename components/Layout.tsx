@@ -10,8 +10,8 @@ import {
     FaTachometerAlt, FaUsers, FaSignOutAlt, FaBars, FaTimes,
     FaUsersCog, FaShieldAlt, FaUserCircle, FaFileInvoiceDollar,
     FaChartLine, FaMoneyBillWave, FaBullhorn, FaAngleLeft, FaAngleRight,
-    FaClipboardCheck, FaMapMarkedAlt, FaServer, FaAd, FaExchangeAlt, 
-    FaAddressBook, FaBookOpen
+    FaClipboardCheck, FaMapMarkedAlt, FaServer, FaAd, FaExchangeAlt,
+    FaAddressBook, FaBookOpen, FaDatabase
 } from 'react-icons/fa';
 
 const navConfig = {
@@ -25,8 +25,9 @@ const navConfig = {
         { href: '/admin/kelola-patroli', label: 'Kelola Titik Patroli', icon: <FaMapMarkedAlt /> },
         { href: '/admin/laporan-keuangan', label: 'Laporan Keuangan', icon: <FaChartLine /> },
         { href: '/laporan-patroli', label: 'Laporan Patroli', icon: <FaShieldAlt /> },
-        { href: '/admin/laporan-keamanan', label: 'Laporan Keamanan', icon: <FaBookOpen /> },
+        { href: '/laporan-keamanan', label: 'Laporan Keamanan', icon: <FaBookOpen /> },
         { href: '/admin/monitoring', label: 'Monitoring DB', icon: <FaServer /> },
+        { href: '/admin/maintenance', label: 'Maintenance DB', icon: <FaDatabase /> },
     ],
     satpam: [
         { href: '/dashboard', label: 'Dashboard', icon: <FaTachometerAlt /> },
@@ -34,6 +35,7 @@ const navConfig = {
         { href: '/satpam/serah-terima', label: 'Serah Terima Shift', icon: <FaExchangeAlt /> },
         { href: '/satpam/buku-tamu', label: 'Buku Tamu', icon: <FaAddressBook /> },
         { href: '/laporan-patroli', label: 'Laporan Patroli', icon: <FaShieldAlt /> },
+        { href: '/laporan-keamanan', label: 'Laporan Keamanan', icon: <FaBookOpen /> },
     ],
     warga: [
         { href: '/dashboard', label: 'Dashboard', icon: <FaTachometerAlt /> },
